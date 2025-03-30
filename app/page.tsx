@@ -1,101 +1,90 @@
-import Image from "next/image";
+import FeatureCard from '@/components/FeatureCard';
+import Link from 'next/link'
+import Image from 'next/image'
 
-export default function Home() {
+const features = [
+  {
+    title: 'Customizable Colors',
+    description:
+      'Design your desired shoe rack from a variety of colors to match your unique style',
+    icon: `DraftingCompass`,
+  },
+  {
+    title: 'Affordable Shipping',
+    description:
+      'We offer affordable country wide shipping on all orders within 1-2 weeks',
+    icon: `Truck`,
+  },
+  {
+    title: 'Quality Craftsmanship',
+    description:
+      'Our shoe racks are made from the best quality materials to ensure durability',
+    icon: `Award`,
+  },
+  {
+    title: 'Easy Assembly',
+    description:
+      'Our shoe racks are easy to set up and collapse for easy storage',
+    icon: `ChevronsDownUp`,
+  },
+];
+
+const Home = () => {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className='font-quicksand flex flex-col items-center content-center h-full w-screen '>
+      <section className='flex h-full px-4 md:px-0 md:w-[70%] text-center md:text-left md:py-16  text-black gap-4 justify-evenly md:justify-between flex-wrap-reverse md:flex-nowrap '>
+        <div className='flex flex-col justify-evenly  gap-8 h-full items-center md:items-baseline w-full md:w-1/2 '>
+          <span className='text-cyan-700 mt-20 text-sm font-semibold md:hidden'>
+            Trusted by over 2000+ customers
+          </span>
+          <h1 className='text-4xl font-semibold leading-tight tracking-wide'>
+            Improve the way you organize your shoes with our Handcrafted Shoe
+            Racks
+          </h1>
+          <p className='text-black/65 text-normal'>
+            Elevate your space with style and flexibility! Our sleek,
+            collapsible shoe racks are as versatile, with customizable colors to
+            match your unique vibe.
+          </p>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href={`/experience`}
+            className={`flex group text-nowrap text-center items-center bg-cyan-700 text-white px-8 w-fit  py-2 rounded hover:text-white`}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            Shop Now
+          </Link>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <div className='hidden md:flex content-center h-1/2 md:h-3/4 filter relative'>
           <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+            src='/images/rack-hero.png'
+            height={200}
+            width={200}
+            className='rounded-xl'
+            alt='Shoe Rack'
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        </div>
+      </section>
+      <section className='flex justify-between flex-wrap  py-16 gap-8 text-black px-4 md:px-0 md:w-[70%] h-full'>
+        <div className='flex flex-col gap-4 w-[100%] text-center'>
+          <h2 className='text-3xl font-semibold'>
+            Why choose Zitenge Shoe Racks?
+          </h2>
+          <p className='text-black/65 text-sm'>
+            We are committed to providing you with the best quality shoe racks
+            that are not only functional but also stylish.
+          </p>
+        </div>
+
+        <div className='flex gap-8  w-full'>
+          <div className='flex gap-4 flex-wrap justify-evenly '>
+            {features.map((feature) => (
+              <FeatureCard {...feature} key={feature.title} />
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
-}
+};
+
+export default Home;
