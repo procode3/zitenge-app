@@ -4,17 +4,25 @@ import { useCustomization } from '@/contexts/Customization';
 import EmptyCart from '@/components/EmptyCart';
 import Checkout from '@/components/Checkout';
 import CartItem from '@/components/CartItem';
+import LoadingCart from '@/components/LoadingCart'
 
 
 function Cart() {
     const ref = useRef(null);
 
-    const { cart, clearCart, removeFromCart } = useCustomization();
+    const { cart, clearCart, removeFromCart, isLoadingCart } = useCustomization();
     const subTotal = cart.reduce((acc, item) => acc + item.price, 0);
 
     const handleSubmit = () => {
         ref.current.submit();
     };
+
+
+
+    if (isLoadingCart) {
+        return < LoadingCart />; // Replace with a better loading UI if needed
+    }
+
 
     return cart?.length > 0 ? (
         <div className='mt-16 md:mt-0 font-quicksand flex flex-col gap-4 text-black items-center justify-center w-screen h-full p-4 md:p-6 '>

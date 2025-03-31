@@ -45,12 +45,14 @@ export const CustomizationProvider = (props) => {
     },
   });
   const [cart, setCart] = useState([]);
+  const [isLoadingCart, setIsLoadingCart] = useState(true);
 
   useEffect(() => {
     const storedCart = localStorage.getItem('cart');
     if (storedCart) {
       setCart(JSON.parse(storedCart));
     }
+    setIsLoadingCart(false);
   }, []);
 
   // Add item to cart
@@ -91,6 +93,7 @@ export const CustomizationProvider = (props) => {
         addToCart,
         clearCart,
         removeFromCart,
+        isLoadingCart
       }}
     >
       {props.children}

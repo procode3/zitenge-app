@@ -1,8 +1,9 @@
 'use client'
-import React, { useRef, forwardRef, useImperativeHandle } from 'react';
+import React, { useState, forwardRef, useImperativeHandle, useCallback, useEffect } from 'react';
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
+import { debounce } from "lodash";
 
 import { useCustomization } from '@/contexts/Customization';
 import { OrderItem } from '@prisma/client';
@@ -27,6 +28,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import {
+  Select, SelectTrigger, SelectValue, SelectItem, SelectContent
+} from "@/components/ui/select"
+
+
 import { Input } from "@/components/ui/input"
 
 
@@ -51,11 +57,6 @@ const paymentMethods = [
     label: 'Cash',
     enabled: false,
   },
-  {
-    name: "bank_transfer",
-    label: 'Bank Transfer',
-    enabled: false,
-  },
 
 ];
 
@@ -70,8 +71,13 @@ const paymentMethods = [
 
 
 const Checkout = forwardRef((props, ref) => {
+  const [suggestions, setSuggestions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [selected, setSelected] = useState(false);
+  const [paymentType, setPaymentType] = useState("deposit");
+  const [fullAmount, setFullAmount] = useState(0)
+
   const { cart } = useCustomization();
-  const subTotal = cart.reduce((acc, item) => acc + item.price, 0);
 
 
 
@@ -82,11 +88,42 @@ const Checkout = forwardRef((props, ref) => {
       phoneNumber: "",
       email: "",
       address: "",
-      paymentMethod: "mpesa"
+      paymentMethod: "mpesa",
+      notes: "",
+      amount: 1000,
+      paymentType: ""
     },
   })
 
 
+  useEffect(() => {
+    const totalAmount = cart.reduce((acc, item) => acc + item.price, 0);
+    setFullAmount(totalAmount)
+  }, [cart]);
+
+
+
+  const fetchSuggestions = useCallback(
+    debounce(async (query) => {
+      if (!query || selected) return setSuggestions([]);
+      setLoading(true);
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}+kenya&format=geojson`
+        );
+        const data = await res.json();
+        setSuggestions(data.features.map((feature) => feature.properties.display_name));
+      } catch (error) {
+        console.error("Error fetching suggestions:", error);
+      }
+      setLoading(false);
+    }, 500),
+    []
+  );
+
+  useEffect(() => {
+    if (!selected) fetchSuggestions(form.getValues("address"));
+  }, [form.watch("address"), selected]);
 
 
   function onSubmit(data: z.infer<typeof orderSchema>) {
@@ -160,15 +197,120 @@ const Checkout = forwardRef((props, ref) => {
               <FormItem>
                 <FormLabel>Shipping Address</FormLabel>
                 <FormControl>
-                  <Input placeholder="Shooters, Utawala" {...field} />
+                  <div className='relative text-sm'>
+                    <Input
+                      placeholder="Shooters, Utawala"
+                      {...field}
+                      onChange={(e) => {
+                        setSelected(false);
+                        field.onChange(e);
+                        fetchSuggestions(e.target.value);
+                      }}
+                    />
+                    {loading && <p className="absolute p-2 w-full border mt-1 bg-white shadow-lg  overflow-auto rounded">Loading...</p>}
+                    {suggestions.length > 0 && (
+                      <ul className="absolute w-full border mt-1 bg-white shadow-lg max-h-48 overflow-auto rounded">
+                        {suggestions.map((s, idx) => (
+                          <li
+                            key={idx}
+                            className="p-2 cursor-pointer hover:bg-gray-200"
+                            onClick={() => {
+                              setSelected(true);
+                              field.onChange(s);
+                              setSuggestions([]);
+                            }}
+                          >
+                            {s}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </FormControl>
+                <FormDescription>Add your shipping address.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="notes"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Notes</FormLabel>
+                <FormControl>
+                  <Input placeholder="Notes" {...field} />
                 </FormControl>
                 <FormDescription>
-                  Add your shipping address.
+                  Add any tailored instructions .
                 </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
+          <div className="flex gap-4 ">
+            <div className="w-1/2">
+              <FormField
+                control={form.control}
+                name="paymentType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Payment Type</FormLabel>
+                    <FormControl>
+                      <Select
+                        value={paymentType}
+                        onValueChange={(value) => {
+                          setPaymentType(value);
+                          field.onChange(value);
+                          if (value === "full") {
+                            form.setValue("amount", fullAmount);
+                          }
+                        }}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select payment type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="deposit">Deposit</SelectItem>
+                          <SelectItem value="full">Pay in Full</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="w-1/2">
+              <FormField
+                control={form.control}
+                name="amount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{paymentType == 'full' ? 'Full Amount' : 'Deposit'}</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="1000"
+                        type="number"
+                        {...field}
+                        disabled={paymentType === "full"}
+                        min={paymentType === "deposit" ? 1000 : undefined}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      {paymentType === "deposit"
+                        ? "Enter a deposit amount."
+                        : `Full payment: ${fullAmount}`}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+
           <FormField
             control={form.control}
             name="paymentMethod"
@@ -193,6 +335,8 @@ const Checkout = forwardRef((props, ref) => {
               </FormItem>
             )}
           />
+
+
         </form>
       </Form>
     </div>
