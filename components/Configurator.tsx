@@ -100,7 +100,6 @@ const Configurator = () => {
     setFrameColor,
     selectedRack,
     setSelectedRack,
-    cart,
     addToCart,
   } = useCustomization();
 
@@ -169,6 +168,11 @@ const Configurator = () => {
 
     const uniqueId = uuid(); // Generate a unique UUID for each cart item
 
+
+    if (!selectedRack.id) {
+      alert('Invalid rack selected.');
+      return;
+    }
     const cartItem = {
       id: uniqueId, // Use the UUID as the unique ID for the cart item
       shoeRackId: selectedRack.id,

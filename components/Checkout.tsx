@@ -9,7 +9,7 @@ import { debounce } from "lodash";
 
 import { useCustomization } from '@/contexts/Customization';
 import { addOrder } from '@/utils/actions/order.actions';
-import { signAction, verifyAction } from '@/utils/actions/token.actions';
+import { signAction } from '@/utils/actions/token.actions';
 
 import {
   Form,
@@ -25,7 +25,6 @@ import {
 } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { orderSchema } from '@/schemas/order.schema';
-import { redirect } from 'next/navigation';
 
 
 const paymentMethods = [
@@ -47,10 +46,19 @@ const paymentMethods = [
 
 ];
 
+interface Feature {
+  properties: {
+    display_name: string;
+  };
+}
+
+interface GeoJsonResponse {
+  features: Feature[];
+}
 
 
 const Checkout = forwardRef((props, ref) => {
-  const [suggestions, setSuggestions] = useState([]);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState(false);
   const [paymentType, setPaymentType] = useState("deposit");
@@ -82,14 +90,14 @@ const Checkout = forwardRef((props, ref) => {
 
 
   const fetchSuggestions = useCallback(
-    debounce(async (query) => {
+    debounce(async (query: string) => {
       if (!query || selected) return setSuggestions([]);
       setLoading(true);
       try {
         const res = await fetch(
           `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}+kenya&format=geojson`
         );
-        const data = await res.json();
+        const data: GeoJsonResponse = await res.json();
         setSuggestions(data.features.map((feature) => feature.properties.display_name));
       } catch (error) {
         console.error("Error fetching suggestions:", error);
@@ -111,6 +119,7 @@ const Checkout = forwardRef((props, ref) => {
       frameColor: item.frameColor,
       quantity: item.quantity,
       price: item.price,
+      name: item.name,
     }))
 
     const { fullName, phoneNumber, email, address, notes, amount, paymentMethod } = data

@@ -4,6 +4,12 @@ import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { revalidatePath } from 'next/cache';
 import { v4 as uuidv4 } from 'uuid';
 
+export type Color = {
+  id: string;
+  name: string;
+  hex: string;
+};
+
 interface Order {
   name: string;
   deliveryDate: string;
@@ -16,11 +22,11 @@ interface Order {
   paymentMethod: string;
   orderItems: {
     shoeRackId: string;
-    name: string;
+    name: string | undefined;
     quantity: number;
     price: number;
-    shelfColor: string;
-    frameColor: string;
+    shelfColor: Color | null;
+    frameColor: Color | null;
   }[];
 }
 

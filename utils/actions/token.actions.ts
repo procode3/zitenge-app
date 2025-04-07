@@ -6,7 +6,6 @@ const { AUTH_SECRET: JWT_SECRET } = process?.env;
 
 interface Payload {
   orderId: string;
-
   paymentMethod: string;
   amount: number;
 }
@@ -21,9 +20,9 @@ export const signAction = async (payload: Payload) => {
   }
 };
 
-export const verifyAction = async (token: string) => {
+export const verifyAction = async (token: string): Promise<Payload> => {
   try {
-    return jwt.verify(token, JWT_SECRET as string);
+    return jwt.verify(token, JWT_SECRET as string) as Promise<Payload>;
   } catch (error) {
     console.error('JWT verification failed:', error);
     throw new Error('Failed to verify JWT');

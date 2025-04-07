@@ -2,20 +2,52 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation'
 
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { verifyAction } from '@/utils/actions/token.actions';
+
 const PaymentPage: React.FC = () => {
     const [selectedGateway, setSelectedGateway] = useState<string | null>(null);
     const [amount, setAmount] = useState<number>(100); // Example amount
     const [loading, setLoading] = useState<boolean>(false);
     const [token, setToken] = useState<string | null>(null); // For storing the token
     const searchParams = useSearchParams()
+    const [data, setData] = useState<{ orderId: string; paymentMethod: string; amount: number } | null>(null);
 
     // Fetch the token from the URL when the page loads
     useEffect(() => {
-        const token = searchParams.get('token'); // Extract token from URL query params
-        if (token) {
-            setToken(token as string); // Set token in state if available
-        }
+        setLoading(true);
+        const token = searchParams.get('token');
+        if (!token) return;
+
+        setToken(token);
+
+        const decodeToken = async () => {
+            try {
+                const { orderId, paymentMethod, amount } = await verifyAction(token);
+                console.log('Decoded token:', { orderId, paymentMethod, amount });
+                if (orderId && paymentMethod && amount) {
+                    setData({
+                        orderId,
+                        paymentMethod,
+                        amount
+                    });
+                    setSelectedGateway(paymentMethod);
+                    setAmount(amount);
+                } else {
+                    console.error('Incomplete token payload');
+                }
+            } catch (err) {
+                console.error('Token verification failed:', err);
+            }
+        };
+
+        decodeToken();
+        setLoading(false);
     }, [searchParams]);
+
 
     const handlePayment = async () => {
         if (!selectedGateway || !token) {
@@ -53,53 +85,33 @@ const PaymentPage: React.FC = () => {
     };
 
     return (
-        <div className="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold text-center mb-6">Complete Your Payment</h2>
+        <div className="max-w-lg mx-auto p-6 my-8 bg-muted rounded-lg shadow-md ">
+            <h2 className="text-xl font-bold text-center mb-2">Complete Your Payment</h2>
 
-            {token ? (
-                <div>
-                    <p className="mb-4 text-gray-600">Payment Token: {token}</p>
-
-                    <div className="mb-6">
-                        <label htmlFor="payment-method" className="block text-sm font-medium text-gray-700">
-                            Select Payment Method:
-                        </label>
-                        <select
-                            id="payment-method"
-                            value={selectedGateway || ''}
-                            onChange={(e) => setSelectedGateway(e.target.value)}
-                            className="mt-2 block w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        >
-                            <option value="">-- Select Payment Method --</option>
-                            <option value="mpesa">MPESA</option>
-                            <option value="card">Credit/Debit Card</option>
-                        </select>
-                    </div>
-
-                    <div className="mb-6">
-                        <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
-                            Amount:
-                        </label>
-                        <input
-                            type="number"
-                            id="amount"
-                            value={amount}
-                            onChange={(e) => setAmount(Number(e.target.value))}
-                            disabled={loading}
-                            className="mt-2 block w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        />
-                    </div>
-
-                    <button
-                        onClick={handlePayment}
-                        disabled={loading || !selectedGateway}
-                        className={`w-full py-2 px-4 rounded-md text-white ${loading || !selectedGateway
-                            ? 'bg-gray-400 cursor-not-allowed'
-                            : 'bg-green-500 hover:bg-green-600'
-                            } transition-colors`}
-                    >
-                        {loading ? 'Processing...' : 'Pay Now'}
-                    </button>
+            {data ? (
+                <div className="flex justify-center items-center p-4 bg-muted">
+                    <Card className="w-full max-w-md shadow-md">
+                        <CardHeader>
+                            <CardTitle>Secure Payment</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div>
+                                <Label>Order ID</Label>
+                                <Input value={data.orderId} disabled />
+                            </div>
+                            <div>
+                                <Label>Payment Method</Label>
+                                <Input value={data?.paymentMethod.toUpperCase()} disabled />
+                            </div>
+                            <div>
+                                <Label>Amount</Label>
+                                <Input value={`KES ${data?.amount.toFixed(2)}`} disabled />
+                            </div>
+                            <Button onClick={handlePayment} className="w-full">
+                                {loading ? `Processing ... ` : `Pay Now`}
+                            </Button>
+                        </CardContent>
+                    </Card>
                 </div>
             ) : (
                 <p className="text-center text-gray-500">Loading payment details...</p>
