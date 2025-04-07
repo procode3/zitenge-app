@@ -8,7 +8,7 @@ const Nav = () => {
   const { cart } = useCustomization();
 
   return (
-    <nav className='hidden md:flex items-center justify-center w-screen border-b-[1px] border-gray-400'>
+    <nav className='hidden md:flex items-center justify-center w-full border-b-[1px] border-gray-400'>
       <div className='flex font-quicksand w-[90%] h-20 text-black justify-between items-center '>
         <h2 className='text-2xl w-1/3 '>zitenge</h2>
         <ul className='flex gap-4 justify-evenly w-1/3'>
