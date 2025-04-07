@@ -32,8 +32,8 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const headerList = await headers();
-  const pathname = headerList.get("x-current-path");
-  const isDashboard = pathname?.startsWith('/dashboard')
+  const pathname = headerList.get('referer')
+  const isDashboard = pathname?.includes('/dashboard') || pathname?.startsWith('/login')
   return (
     <html lang="en">
       <body

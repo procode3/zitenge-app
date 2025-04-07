@@ -3,7 +3,7 @@
 import { signIn, signOut } from '@/utils/auth';
 import { AuthError } from 'next-auth';
 import { redirect } from 'next/navigation';
-import { darajaClient } from './daraja';
+
 
 export async function authenticate(
   prevState: string | undefined,
@@ -36,38 +36,8 @@ export async function signOutAction() {
   redirect('/login');
 }
 
-export async function orderAction(
-  prevState: string | undefined,
-  formData: FormData
-) {
-  try {
-    const {
-      fullName,
-      email,
-      address,
-      phoneNumber,
-      paymentMethod,
-      amount,
-      shoeRack,
-    } = formData;
 
-    const paymentResponse = await darajaClient.sendPaymentRequest({
-      phoneNumber,
-      amount,
-    });
 
-   const orderPromise = fetch('/api/post', {
-    method: 'POST', 
-    body: {
-      fullName,
-      email,
-      address,
-      phoneNumber,
-      paymentMethod,
-      amount,
-      shoeRack,
-    }
-   })
 
-  } catch (error) {}
-}
+
+

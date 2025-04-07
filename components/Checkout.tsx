@@ -1,24 +1,16 @@
 'use client'
 import React, { useState, forwardRef, useImperativeHandle, useCallback, useEffect } from 'react';
+import { useForm } from "react-hook-form"
+import { useRouter } from 'next/navigation'; // For extracting URL params
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { debounce } from "lodash";
 
 import { useCustomization } from '@/contexts/Customization';
-import { OrderItem } from '@prisma/client';
+import { addOrder } from '@/utils/actions/order.actions';
+import { signAction, verifyAction } from '@/utils/actions/token.actions';
 
-
-// import {
-//   LucideIcon,
-//   UserRound as UserIcon,
-//   AtSign,
-//   MapPin,
-//   Wallet,
-//   Phone,
-// } from 'lucide-react';
-
-import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -31,14 +23,9 @@ import {
 import {
   Select, SelectTrigger, SelectValue, SelectItem, SelectContent
 } from "@/components/ui/select"
-
-
 import { Input } from "@/components/ui/input"
-
-
-import { useForm } from "react-hook-form"
-
 import { orderSchema } from '@/schemas/order.schema';
+import { redirect } from 'next/navigation';
 
 
 const paymentMethods = [
@@ -61,24 +48,15 @@ const paymentMethods = [
 ];
 
 
-// {
-//   frameColor:  "Rustic"
-//   id: "66c21df6-e144-47f2-80de-67bdc316f48c"
-//   price : 7500
-//   rack:"30 Pair"
-//   shelfColor: "Rustic"
-// }
-
 
 const Checkout = forwardRef((props, ref) => {
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState(false);
   const [paymentType, setPaymentType] = useState("deposit");
-  const [fullAmount, setFullAmount] = useState(0)
-
+  const [fullAmount, setFullAmount] = useState(0);
   const { cart } = useCustomization();
-
+  const router = useRouter();
 
 
   const form = useForm<z.infer<typeof orderSchema>>({
@@ -126,9 +104,55 @@ const Checkout = forwardRef((props, ref) => {
   }, [form.watch("address"), selected]);
 
 
-  function onSubmit(data: z.infer<typeof orderSchema>) {
-    console.log(cart)
-    alert(JSON.stringify(data));
+  async function onSubmit(data: z.infer<typeof orderSchema>) {
+    const orderItems = cart.map((item) => ({
+      shoeRackId: item.shoeRackId,
+      shelfColor: item.shelfColor,
+      frameColor: item.frameColor,
+      quantity: item.quantity,
+      price: item.price,
+    }))
+
+    const { fullName, phoneNumber, email, address, notes, amount, paymentMethod } = data
+
+    const orderData = {
+      name: fullName,
+      deliveryAddress: address,
+      deliveryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      notes,
+      phoneNumber,
+      email,
+      deposit: amount,
+      userId: "",
+      orderItems: orderItems,
+      paymentMethod
+    };
+
+    const response = await addOrder(orderData);
+    if (response.success) {
+      const { orderId, paymentMethod, amount } = response.data as {
+        orderId: string;
+        paymentMethod: string;
+        amount: number;
+      };
+
+
+      const token = await signAction({
+        orderId,
+        paymentMethod,
+        amount,
+      });
+
+
+      const paymentUrl = `/pay?token=${token}`;
+
+      alert(`Order created successfully proceed to pay with ${paymentUrl}`);
+      router.push(paymentUrl);
+
+    }
+    else {
+      alert("Failed to create order");
+    }
   }
 
   useImperativeHandle(ref, () => ({

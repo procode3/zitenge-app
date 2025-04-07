@@ -7,7 +7,6 @@ export async function middleware(req: NextRequest) {
   const headers = new Headers(req.headers);
 
   const { pathname } = new URL(req.url);
-  headers.set('x-current-path', pathname);
 
   const isAuthenticated = !!session?.user;
   const isDashboardRoute = pathname.startsWith('/dashboard');
@@ -20,9 +19,10 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL('/dashboard', req.url));
   }
 
-  return NextResponse.next({ headers });
+  return NextResponse.next();
 }
 
 export const config = {
   matcher: ['/dashboard/:path*', '/login'],
+  missing: [{ type: 'header', key: 'next-action' }],
 };

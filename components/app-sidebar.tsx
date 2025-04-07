@@ -79,7 +79,7 @@ const data = {
         { title: "General", url: "#" },
         { title: "Team", url: "#" },
         { title: "Billing", url: "#" },
-        { title: "Configurator", url: "#" },
+        { title: "Configurator", url: "/dashboard/settings/configurator" },
         { title: "Integrations", url: "#" },
 
       ],

@@ -91,7 +91,7 @@ function Rack({ shelfCount = 9, spacing = 0.21 }) {
           ref={rackRef}
           scale={[selectedRack?.length / 100, 1, 1]}
         >
-          <meshStandardMaterial color={shelfColor?.color} roughness={0.8} />
+          <meshStandardMaterial color={shelfColor?.hex} roughness={0.8} />
         </mesh>
 
         {/* Instanced top shelves */}
@@ -101,7 +101,7 @@ function Rack({ shelfCount = 9, spacing = 0.21 }) {
           castShadow
           scale={[selectedRack?.length / 100, 1, 1]}
         >
-          <meshStandardMaterial color={shelfColor?.color} roughness={1} />
+          <meshStandardMaterial color={shelfColor?.hex} roughness={1} />
         </instancedMesh>
 
         <instancedMesh
@@ -110,7 +110,7 @@ function Rack({ shelfCount = 9, spacing = 0.21 }) {
           castShadow
           scale={[selectedRack?.length / 100, 1, 1]}
         >
-          <meshStandardMaterial color={frameColor?.color} roughness={0.4} />
+          <meshStandardMaterial color={frameColor?.hex} roughness={0.4} />
         </instancedMesh>
 
         <AccumulativeShadows

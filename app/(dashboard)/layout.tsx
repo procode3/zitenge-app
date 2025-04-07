@@ -13,7 +13,8 @@ import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-    console.log('dashboard layout')
+    
+
     return (
         <SessionProvider>
             <SidebarProvider>
@@ -27,11 +28,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                 <Breadcrumb>
                                     <BreadcrumbList>
                                         <BreadcrumbItem className="hidden md:block">
-                                            <BreadcrumbLink href="#">Building Your Application</BreadcrumbLink>
+                                            <BreadcrumbLink href="#">{'Building Your Application'}</BreadcrumbLink>
                                         </BreadcrumbItem>
                                         <BreadcrumbSeparator className="hidden md:block" />
                                         <BreadcrumbItem>
-                                            <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+                                            <BreadcrumbPage>{'Data Fetching'}</BreadcrumbPage>
+                                        </BreadcrumbItem>
+                                        <BreadcrumbSeparator className="hidden md:block" />
+                                        <BreadcrumbItem>
+                                            <BreadcrumbPage>{'Data Fetching'}</BreadcrumbPage>
                                         </BreadcrumbItem>
                                     </BreadcrumbList>
                                 </Breadcrumb>

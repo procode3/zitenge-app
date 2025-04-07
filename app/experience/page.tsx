@@ -1,10 +1,18 @@
 'use client'
+
+
+import { Suspense } from 'react';
+
+
 import Rack from '@/components/Rack';
 import { Canvas } from '@react-three/fiber';
 import { Environment, OrbitControls } from '@react-three/drei';
-import Configurator from '@/components/Configurator';
 import * as THREE from 'three';
+
+import Configurator from '@/components/Configurator';
 import { useCustomization } from '@/contexts/Customization';
+
+
 
 const Experience = () => {
     const { selectedRack } = useCustomization();
@@ -30,7 +38,9 @@ const Experience = () => {
                     <Environment preset='city' />
                 </Canvas>
             </div>
-            <Configurator />
+            <Suspense fallback={<p>Loading Configurator...</p>}>
+                <Configurator />
+            </Suspense>
         </div>
     );
 };

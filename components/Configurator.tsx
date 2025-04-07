@@ -3,90 +3,94 @@ import { useState, useEffect } from 'react';
 import { MoveRight } from 'lucide-react';
 import { v4 as uuid } from 'uuid';
 
-import { useCustomization, colors } from '@/contexts/Customization';
 
-const shoeRacks = [
-  {
-    name: '12 Pair',
-    length: 65,
-    levels: 6,
-    price: {
-      rustic: 3500,
-      painted: 4200,
-      combined: 4000,
-    },
-  },
-  {
-    name: '18 Pair',
-    length: 72,
-    levels: 6,
-    price: {
-      rustic: 4500,
-      painted: 5500,
-      combined: 5000,
-    },
-  },
-  {
-    name: '24 Pair',
-    length: 90,
-    levels: 6,
-    price: {
-      rustic: 5300,
-      painted: 6500,
-      combined: 6000,
-    },
-  },
-  {
-    name: '30 Pair',
-    length: 110,
-    levels: 6,
-    price: {
-      rustic: 7500,
-      painted: 8500,
-      combined: 8000,
-    },
-  },
-  {
-    name: '40 Pair',
-    length: 110,
-    levels: 8,
-    price: {
-      rustic: 8500,
-      painted: 10000,
-      combined: 9000,
-    },
-  },
-  {
-    name: '50 Pair',
-    length: 110,
-    levels: 10,
-    price: {
-      rustic: 11000,
-      painted: 13000,
-      combined: 12000,
-    },
-  },
-  {
-    name: '60 Pair',
-    length: 130,
-    levels: 10,
-    price: {
-      rustic: 13000,
-      painted: 15000,
-      combined: 14000,
-    },
-  },
-  {
-    name: '70 Pair',
-    length: 150,
-    levels: 10,
-    price: {
-      rustic: 15000,
-      painted: 17000,
-      combined: 16000,
-    },
-  },
-];
+import { useCustomization } from '@/contexts/Customization';
+import { getRacks } from '@/utils/actions/rack.actions';
+import { getColors } from '@/utils/actions/colors.action';
+
+// const shoeRacks = [
+//   {
+//     name: '12 Pair',
+//     length: 65,
+//     levels: 6,
+//     price: {
+//       rustic: 3500,
+//       painted: 4200,
+//       combined: 4000,
+//     },
+//   },
+//   {
+//     name: '18 Pair',
+//     length: 72,
+//     levels: 6,
+//     price: {
+//       rustic: 4500,
+//       painted: 5500,
+//       combined: 5000,
+//     },
+//   },
+//   {
+//     name: '24 Pair',
+//     length: 90,
+//     levels: 6,
+//     price: {
+//       rustic: 5300,
+//       painted: 6500,
+//       combined: 6000,
+//     },
+//   },
+//   {
+//     name: '30 Pair',
+//     length: 110,
+//     levels: 6,
+//     price: {
+//       rustic: 7500,
+//       painted: 8500,
+//       combined: 8000,
+//     },
+//   },
+//   {
+//     name: '40 Pair',
+//     length: 110,
+//     levels: 8,
+//     price: {
+//       rustic: 8500,
+//       painted: 10000,
+//       combined: 9000,
+//     },
+//   },
+//   {
+//     name: '50 Pair',
+//     length: 110,
+//     levels: 10,
+//     price: {
+//       rustic: 11000,
+//       painted: 13000,
+//       combined: 12000,
+//     },
+//   },
+//   {
+//     name: '60 Pair',
+//     length: 130,
+//     levels: 10,
+//     price: {
+//       rustic: 13000,
+//       painted: 15000,
+//       combined: 14000,
+//     },
+//   },
+//   {
+//     name: '70 Pair',
+//     length: 150,
+//     levels: 10,
+//     price: {
+//       rustic: 15000,
+//       painted: 17000,
+//       combined: 16000,
+//     },
+//   },
+// ];
+
 
 const Configurator = () => {
   const {
@@ -102,6 +106,34 @@ const Configurator = () => {
 
 
   const [price, setPrice] = useState(0);
+  const [shoeRacks, setShoeRacks] = useState([]);
+  const [colors, setColors] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      const [racksRes, colorsRes] = await Promise.all([getRacks(), getColors()]);
+
+      if (racksRes.success) {
+        console.log(racksRes.racks);
+        setShoeRacks(racksRes.racks);
+      } else {
+        console.error('Failed to fetch racks:', racksRes.message);
+      }
+
+      if (colorsRes.success) {
+        setColors(colorsRes.colors);
+      } else {
+        console.error('Failed to fetch colors:', colorsRes.message);
+      }
+
+      setLoading(false);
+    };
+
+    fetchData();
+  }, []);
+
 
   const calculateCost = (selectedRack, shelfColor, frameColor) => {
     if (!selectedRack) {
@@ -139,9 +171,11 @@ const Configurator = () => {
 
     const cartItem = {
       id: uniqueId, // Use the UUID as the unique ID for the cart item
+      shoeRackId: selectedRack.id,
       rack: selectedRack.name,
       shelfColor: shelfColor.name,
       frameColor: frameColor.name,
+      quantity: 1,
       price,
     };
 
@@ -182,6 +216,8 @@ const Configurator = () => {
         <div className='flex flex-col gap-2'>
           <h2 className='text-base font-semibold'>Size</h2>
           <div className='flex gap-3 flex-wrap text-sm font-medium select-none'>
+
+
             {shoeRacks?.map((rack, index) => (
               <div
                 key={index}
@@ -194,6 +230,7 @@ const Configurator = () => {
                 {rack.name}
               </div>
             ))}
+
           </div>
         </div>
       </div>
@@ -209,9 +246,9 @@ const Configurator = () => {
               >
                 <div
                   key={index}
-                  className={` ${shelfColor?.color !== color?.color ? 'h-7 w-7' : 'h-6 w-6'
+                  className={` ${shelfColor?.name !== color?.name ? 'h-7 w-7' : 'h-6 w-6'
                     }  rounded-full cursor-pointer border-slate-800 border-[1px]`}
-                  style={{ backgroundColor: color.color }}
+                  style={{ backgroundColor: color.hex }}
                   onClick={() => setShelfColor(color)}
                 ></div>
               </div>
@@ -234,9 +271,9 @@ const Configurator = () => {
               >
                 <div
                   key={index}
-                  className={` ${frameColor?.color !== color?.color ? 'h-7 w-7' : 'h-6 w-6'
+                  className={` ${frameColor?.name !== color?.name ? 'h-7 w-7' : 'h-6 w-6'
                     }  rounded-full cursor-pointer border-slate-800 border-[1px]`}
-                  style={{ backgroundColor: color.color }}
+                  style={{ backgroundColor: color.hex }}
                   onClick={() => setFrameColor(color)}
                 ></div>
               </div>

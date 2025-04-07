@@ -36,7 +36,6 @@ import {
 } from "@/components/ui/sidebar"
 
 export function NavUser() {
-  console.log('at navuser')
   const { isMobile } = useSidebar()
   const [isPending, startTransition] = useTransition()
   const { data: session } = useSession()
