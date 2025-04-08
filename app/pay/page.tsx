@@ -27,7 +27,6 @@ const PaymentPage: React.FC = () => {
         const decodeToken = async () => {
             try {
                 const { orderId, paymentMethod, amount } = await verifyAction(token);
-                console.log('Decoded token:', { orderId, paymentMethod, amount });
                 if (orderId && paymentMethod && amount) {
                     setData({
                         orderId,
@@ -107,7 +106,11 @@ const PaymentPage: React.FC = () => {
                                 <Label>Amount</Label>
                                 <Input value={`KES ${data?.amount.toFixed(2)}`} disabled />
                             </div>
-                            <Button onClick={handlePayment} className="w-full">
+                            <div>
+                                <Label>Phone Number</Label>
+                                <Input value={`KES ${data?.amount.toFixed(2)}`} />
+                            </div>
+                            <Button onClick={handlePayment} className="w-full" disabled={loading}>
                                 {loading ? `Processing ... ` : `Pay Now`}
                             </Button>
                         </CardContent>

@@ -7,7 +7,6 @@ import { Suspense } from 'react';
 import Rack from '@/components/Rack';
 import { Canvas } from '@react-three/fiber';
 import { Environment, OrbitControls } from '@react-three/drei';
-import * as THREE from 'three';
 
 import Configurator from '@/components/Configurator';
 import { useCustomization } from '@/contexts/Customization';

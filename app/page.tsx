@@ -3,35 +3,35 @@ import Link from 'next/link'
 import Image from 'next/image'
 import Testimonials from '@/components/Testimonials';
 
-const features = [
-  {
-    title: 'Customizable Colors',
-    description:
-      'Design your desired shoe rack from a variety of colors to match your unique style',
-    icon: `DraftingCompass`,
-  },
-  {
-    title: 'Affordable Shipping',
-    description:
-      'We offer affordable country wide shipping on all orders within 1-2 weeks',
-    icon: `Truck`,
-  },
-  {
-    title: 'Quality Craftsmanship',
-    description:
-      'Our shoe racks are made from the best quality materials to ensure durability',
-    icon: `Award`,
-  },
-  {
-    title: 'Easy Assembly',
-    description:
-      'Our shoe racks are easy to set up and collapse for easy storage',
-    icon: `ChevronsDownUp`,
-  },
+const features: { icon: "DraftingCompass" | "Truck" | "Award" | "ChevronsDownUp"; title: string; description: string; }[] = [
+	{
+		title: 'Customizable Colors',
+		description:
+			'Design your desired shoe rack from a variety of colors to match your unique style',
+		icon: `DraftingCompass`,
+	},
+	{
+		title: 'Affordable Shipping',
+		description:
+			'We offer affordable country wide shipping on all orders within 1-2 weeks',
+		icon: `Truck`,
+	},
+	{
+		title: 'Quality Craftsmanship',
+		description:
+			'Our shoe racks are made from the best quality materials to ensure durability',
+		icon: `Award`,
+	},
+	{
+		title: 'Easy Assembly',
+		description:
+			'Our shoe racks are easy to set up and collapse for easy storage',
+		icon: `ChevronsDownUp`,
+	},
 ];
 
 const Home = () => {
-  return (
+	return (
 		<div className="font-quicksand flex flex-col items-center content-center h-full w-full ">
 			<section className="flex h-full px-4 md:px-0 md:w-[70%] text-center md:text-left md:py-16  text-black gap-4 justify-evenly md:justify-between flex-wrap-reverse md:flex-nowrap ">
 				<div className="flex flex-col justify-evenly  gap-8 h-full items-center md:items-baseline w-full md:w-1/2 ">

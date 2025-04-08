@@ -5,26 +5,28 @@ import { useState } from 'react';
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogClose } from "@/components/ui/dialog";
+import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { HexColorPicker } from "react-colorful";
 import { createColor } from '@/utils/actions/colors.action';
 import { Plus } from "lucide-react";
+import { Color } from '@/contexts/Customization';
 const colorSchema = z.object({
+    id: z.string(),
     name: z.string().min(1, "Name is required"),
     hex: z.string().regex(/^#([0-9A-F]{6})$/i, "Invalid hex code"),
 });
 
-export default function ColorFormDialog({ color, setColors, existingColors }) {
+export default function ColorFormDialog({ color, setColors, existingColors }: { color: Color | null, setColors: (colors: Color[]) => void, existingColors: Color[] }) {
     const [open, setOpen] = useState(false)
     const form = useForm({
         resolver: zodResolver(colorSchema),
-        defaultValues: color || { name: "", hex: "#ffffff" },
+        defaultValues: color || { id: "", name: "", hex: "#ffffff" },
     });
 
-    async function handleSubmit(values) {
+    async function handleSubmit(values: Color) {
         if (existingColors.some(c => c.hex.toUpperCase() === values.hex.toUpperCase())) {
             form.setError("hex", { type: "manual", message: "Hex code must be unique" });
             return;
@@ -35,7 +37,7 @@ export default function ColorFormDialog({ color, setColors, existingColors }) {
             setOpen(false);
             setColors([
                 ...existingColors,
-                ...res?.results
+                ...res?.results as Color[],
             ]);
 
         } else {

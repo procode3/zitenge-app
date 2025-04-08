@@ -2,9 +2,9 @@ import Nav from './Nav';
 import NavMobile from './NavMobile';
 import Footer from './Footer';
 
-import React from 'react';
+import { ReactNode } from 'react';
 
-function ExperienceLayout(children) {
+function ExperienceLayout(children: ReactNode) {
   return (
     <>
       <Nav />

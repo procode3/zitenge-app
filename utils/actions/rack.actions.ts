@@ -33,7 +33,7 @@ export async function addRack({
   price,
 }: {
   name: string;
-  length: string;
+  length: number;
   levels: number;
   price: {
     rustic: number;
@@ -93,4 +93,3 @@ export async function deleteRack(id: string) {
     return { success: false, message: 'Failed to delete rack' };
   }
 }
-

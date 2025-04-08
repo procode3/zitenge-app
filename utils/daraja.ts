@@ -52,7 +52,13 @@ class DarajaClient {
     }
   }
 
-  async sendPaymentRequest(data): Promise<unknown> {
+  async sendPaymentRequest(data: {
+    amount: number;
+    phoneNumber: string;
+    callbackURL: string;
+    accountReference: string;
+    transactionDesc: string;
+  }): Promise<unknown> {
     const token = await this.getAuthToken();
     const headers = new Headers();
     headers.append('Authorization', `Bearer ${token}`);

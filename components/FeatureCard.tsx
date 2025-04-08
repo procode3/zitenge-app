@@ -1,4 +1,6 @@
+import React from 'react';
 import { Truck, DraftingCompass, Award, ChevronsDownUp } from 'lucide-react';
+
 
 const icons = {
   Truck: Truck,
@@ -7,9 +9,11 @@ const icons = {
   ChevronsDownUp: ChevronsDownUp,
 };
 
-function FeatureCard(props) {
+export type IconName = keyof typeof icons;
+
+function FeatureCard(props: { icon: IconName; title: string; description: string }) {
   const { icon, title, description } = props;
-  const IconComponent = icons[icon];
+  const IconComponent = icons[icon]
   return (
     <div className='flex flex-col gap-5 w-full border shadow-md border-slate-900/40  rounded p-5 md:p-10 items-center text-center'>
       <div className='w-20 h-20 relative rounded-full bg-slate-400/60 my-4'>

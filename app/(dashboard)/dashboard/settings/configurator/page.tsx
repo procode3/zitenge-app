@@ -1,12 +1,12 @@
 "use client"
 
-import { useState, useActionState, useEffect, useTransition } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogAction, AlertDialogCancel, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
-import { Plus, Trash2, Pencil, LoaderCircle, AlertTriangle } from "lucide-react";
+import { Plus, Trash2, Pencil, LoaderCircle } from "lucide-react";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,8 +14,9 @@ import { z } from "zod";
 import ColorFormDialog from '@/components/ColorFormDialog'
 import { DialogTitle } from '@radix-ui/react-dialog';
 
-import { updateColorAction, getColors, deleteColor } from '@/utils/actions/colors.action'
+import { getColors, deleteColor } from '@/utils/actions/colors.action'
 import { addRack, getRacks, deleteRack } from '@/utils/actions/rack.actions'
+import { Color, Rack } from '@/contexts/Customization';
 
 const rackSchema = z.object({
     name: z.string().min(1, "Name is required"),
@@ -32,12 +33,12 @@ const rackSchema = z.object({
 
 
 export default function ConfiguratorSettings() {
-    const [shoeRacks, setShoeRacks] = useState([]);
-    const [editingRack, setEditingRack] = useState(null);
-    const [newRack, setNewRack] = useState({ name: "", length: "", levels: "", price: { rustic: "", painted: "", combined: "" } });
+    const [shoeRacks, setShoeRacks] = useState<Rack[]>([]);
+    const [editingRack, setEditingRack] = useState<Rack & { index: number } | null>(null);
     const [isPending, startTransition] = useTransition();
-    const [pendingId, setPendingId] = useState(null);
+    const [pendingId, setPendingId] = useState<string>("");
     const [open, setOpen] = useState(false)
+    const [colors, setColors] = useState<Color[]>([]);
 
     const form = useForm({
         resolver: zodResolver(rackSchema),
@@ -50,12 +51,21 @@ export default function ConfiguratorSettings() {
     });
 
 
-    async function handleSubmit(values) {
+    async function handleSubmit(values: {
+        name: string;
+        length: number;
+        levels: number;
+        price: {
+            rustic: number;
+            painted: number;
+            combined: number;
+        };
+    }) {
         const { success, results } = await addRack(values)
 
         if (success && results) {
             setOpen(false);
-            addShoeRack(results);
+            addShoeRack(results as Rack);
         } else {
             alert("Adding rack failed, an error occured")
         }
@@ -63,24 +73,19 @@ export default function ConfiguratorSettings() {
     }
 
 
-
-    function deleteShoeRack(index) {
-        setShoeRacks(shoeRacks?.filter((_, i) => i !== index));
-    }
-
-    function updateShoeRack(index, updatedRack) {
-        const updatedRacks = [...shoeRacks];
+    function updateShoeRack(index: number, updatedRack: Rack) {
+        const updatedRacks: Rack[] = [...shoeRacks];
         updatedRacks[index] = updatedRack;
-        setShoeRacks(updatedRacks);
+        setShoeRacks(updatedRacks as Rack[]);
         setEditingRack(null);
     }
 
-    function addShoeRack(newRack) {
-        setShoeRacks([...shoeRacks, newRack]);
-        setNewRack({ name: "", length: "", levels: "", price: { rustic: "", painted: "", combined: "" } });
+    function addShoeRack(addedRack: Rack) {
+
+        setShoeRacks([...shoeRacks, addedRack]);
+
     }
-    const [newColor, setNewColor] = useState({ name: "", hex: "#000000" });
-    const [colors, setColors] = useState([]);
+
 
     useEffect(() => {
         async function fetchData() {
@@ -91,11 +96,11 @@ export default function ConfiguratorSettings() {
                 // Handle colors and racks results
                 if (colorsRes?.success) {
 
-                    setColors(colorsRes?.colors);
+                    setColors(colorsRes?.colors as Color[]);
                 }
                 if (racksRes?.success) {
                     console.log(racksRes?.racks);
-                    setShoeRacks(racksRes?.racks);
+                    setShoeRacks(racksRes?.racks as Rack[]);
                 }
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -106,35 +111,35 @@ export default function ConfiguratorSettings() {
 
 
 
-    const handleDelete = (id) => {
+    const handleDelete = (id: string) => {
         setPendingId(id);
         startTransition(async () => {
             const res = await deleteColor(id);
             if (res?.success) {
                 setColors(colors.filter((color) => color?.id !== id));
             }
-            setPendingId(null);
+            setPendingId("");
         });
     };
 
-    const handleRackDelete = async (id) => {
+    const handleRackDelete = async (id: string) => {
         setPendingId(id);
         startTransition(async () => {
             const res = await deleteRack(id);
             if (res?.success) {
                 setShoeRacks(shoeRacks.filter((rack) => rack?.id !== id));
             }
-            setPendingId(null);
+            setPendingId("");
         });
     }
 
 
-    function updateColor(index, updatedColor) {
-        console.log(updatedColor)
-        const updatedColors = [...colors];
-        updatedColors[index] = updatedColor;
-        setColors(updatedColors);
-    }
+    // function updateColor(index: number, updatedColor: Color) {
+    //     console.log(updatedColor)
+    //     const updatedColors = [...colors];
+    //     updatedColors[index] = updatedColor;
+    //     setColors(updatedColors);
+    // }
 
 
     return (
@@ -242,7 +247,7 @@ export default function ConfiguratorSettings() {
                                 <TableCell>{rack.price.combined}</TableCell>
                                 <TableCell className="flex gap-1">
                                     <Dialog>
-                                        <DialogTrigger asChild className=' ' onClick={() => setEditingRack({ ...rack, index })}>
+                                        <DialogTrigger asChild className=' ' onClick={() => setEditingRack({ ...rack, index } as Rack & { index: number })}>
                                             <Pencil size={16} className='my-auto' />
                                         </DialogTrigger>
                                         <DialogContent>
@@ -288,7 +293,7 @@ export default function ConfiguratorSettings() {
                 <h2 className="text-lg font-bold">Manage Colors</h2>
                 <div className='flex justify-end'>
                     <ColorFormDialog
-                        color={""}
+                        color={null}
                         setColors={setColors}
                         existingColors={colors}
                     />
