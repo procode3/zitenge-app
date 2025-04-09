@@ -6,7 +6,7 @@ import Checkout from '@/components/Checkout';
 import CartItem from '@/components/CartItem';
 import LoadingCart from '@/components/LoadingCart'
 
-export const runtime = 'nodejs';
+export const runtime = 'edge';
 function Cart() {
     const ref = useRef<HTMLFormElement | null>(null);
 

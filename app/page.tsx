@@ -3,6 +3,9 @@ import Link from 'next/link'
 import Image from 'next/image'
 import Testimonials from '@/components/Testimonials';
 
+
+export const runtime = 'edge';
+
 const features: { icon: "DraftingCompass" | "Truck" | "Award" | "ChevronsDownUp"; title: string; description: string; }[] = [
 	{
 		title: 'Customizable Colors',
