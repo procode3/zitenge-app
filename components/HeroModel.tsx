@@ -21,7 +21,7 @@ function MouseCameraController() {
 }
 
 export default function HeroModel() {
-	const [fov, setFov] = useState(20); // Default FOV for normal screens
+	const [fov, setFov] = useState(45); // Default FOV for normal screens
 
 	useEffect(() => {
 		// Adjust FOV based on screen size
@@ -46,10 +46,10 @@ export default function HeroModel() {
 	}, []);
 
 	return (
-		<div className="w-full h-full">
+		<div className="w-full h-[90vh]">
 			<Canvas
 				shadows
-				camera={{ position: [20, 10, 3.5], fov }} // Dynamically set FOV
+				camera={{ position: [10, 10, 3.5], fov }} // Dynamically set FOV
 				dpr={1.5}
 				gl={{ preserveDrawingBuffer: true }}
 			>
