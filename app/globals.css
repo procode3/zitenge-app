@@ -120,3 +120,31 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes marquee-vertical {
+  0% {
+    transform: translateY(0%);
+  }
+  100% {
+    transform: translateY(-100%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee linear infinite;
+  animation-duration: var(--duration, 40s);
+}
+
+.animate-marquee-vertical {
+  animation: marquee-vertical linear infinite;
+  animation-duration: var(--duration, 40s);
+}
