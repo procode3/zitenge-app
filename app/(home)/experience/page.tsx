@@ -11,7 +11,6 @@ import { Environment, OrbitControls } from '@react-three/drei';
 import Configurator from '@/components/Configurator';
 import { useCustomization } from '@/contexts/Customization';
 
-export const runtime = 'edge';
 
 const Experience = () => {
     const { selectedRack } = useCustomization();

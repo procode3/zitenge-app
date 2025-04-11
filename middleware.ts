@@ -4,7 +4,6 @@ import type { NextRequest } from 'next/server';
 
 export async function middleware(req: NextRequest) {
   const session = await auth();
-  const headers = new Headers(req.headers);
 
   const { pathname } = new URL(req.url);
 

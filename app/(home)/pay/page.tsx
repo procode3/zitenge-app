@@ -8,7 +8,6 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { verifyAction } from '@/utils/actions/token.actions';
 
-export const runtime = 'edge';
 
 const PaymentPage: React.FC = () => {
     const [selectedGateway, setSelectedGateway] = useState<string | null>(null);

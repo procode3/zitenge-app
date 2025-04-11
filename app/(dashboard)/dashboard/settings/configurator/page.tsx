@@ -19,8 +19,6 @@ import { addRack, getRacks, deleteRack } from '@/utils/actions/rack.actions'
 import { Color, Rack } from '@/contexts/Customization';
 
 
-export const runtime = 'edge';
-
 const rackSchema = z.object({
     name: z.string().min(1, "Name is required"),
     length: z.number().min(1, "Length must be positive"),

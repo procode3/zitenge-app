@@ -1,6 +1,5 @@
 import { LoginForm } from "@/components/login-form"
 
-export const runtime = 'edge';
 
 export default function Page() {
   return (
