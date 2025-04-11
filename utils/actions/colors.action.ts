@@ -1,7 +1,7 @@
 'use server';
 
 import { getCloudflareContext } from '@opennextjs/cloudflare';
-import { v4 as uuidv4 } from 'uuid'; 
+import { v4 as uuidv4 } from 'uuid';
 
 export async function getColors() {
   try {
@@ -69,7 +69,6 @@ export async function deleteColor(id: string) {
     if (!db) throw new Error('Database not found in context');
 
     await db.prepare('DELETE FROM color WHERE id = ?').bind(id).run();
-
 
     return { success: true, message: 'Color deleted successfully' };
   } catch (error) {

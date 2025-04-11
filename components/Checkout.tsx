@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, forwardRef, useImperativeHandle, useCallback, useEffect } from 'react';
+import React, { useState, forwardRef, useImperativeHandle, useCallback, useEffect, useRef } from 'react';
 import { useForm } from "react-hook-form"
 import { useRouter } from 'next/navigation'; // For extracting URL params
 
@@ -104,13 +104,33 @@ const Checkout = forwardRef((props, ref) => {
       }
       setLoading(false);
     }, 500),
-    []
+    [selected]
   );
 
-  useEffect(() => {
-    if (!selected) fetchSuggestions(form.getValues("address"));
-  }, [form.watch("address"), selected]);
 
+  const address = form.watch("address");
+
+  useEffect(() => {
+    if (!selected) fetchSuggestions(address);
+  }, [address, selected, fetchSuggestions]);
+
+  const suggestionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        suggestionRef.current &&
+        !suggestionRef.current.contains(event.target as Node)
+      ) {
+        setSuggestions([]);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   async function onSubmit(data: z.infer<typeof orderSchema>) {
     const orderItems = cart.map((item) => ({
@@ -230,7 +250,7 @@ const Checkout = forwardRef((props, ref) => {
               <FormItem>
                 <FormLabel>Shipping Address</FormLabel>
                 <FormControl>
-                  <div className='relative text-sm'>
+                  <div ref={suggestionRef} className='relative text-sm'>
                     <Input
                       placeholder="Shooters, Utawala"
                       {...field}

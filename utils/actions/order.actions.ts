@@ -52,40 +52,6 @@ export async function getOrders() {
   }
 }
 
-// model Order {
-//     id              String      @id @default(cuid())
-//     customerName    String
-//     deliveryDate    DateTime
-//     deliveryAddress String
-//     notes           String?
-//     phoneNumber     String?
-//     guestEmail      String?
-//     guestName       String?
-//     deposit         Float?
-//     userId          String?
-//     user            User?       @relation(fields: [userId], references: [id])
-//     status          OrderStatus @default(PENDING)
-//     orderItems      OrderItem[]
-//     cancelledby     String?
-//     createdAt       DateTime    @default(now())
-//     updatedAt       DateTime    @updatedAt
-//     Payment         Payment[]
-//   }
-
-// model OrderItem {
-//     id         String   @id @default(uuid())
-//     orderId    String
-//     order      Order    @relation(fields: [orderId], references: [id])
-//     shoeRackId String
-//     shoeRack   ShoeRack @relation(fields: [shoeRackId], references: [id])
-//     shelfColor String
-//     frameColor String
-//     quantity   Int
-//     price      Decimal
-//     createdAt  DateTime @default(now())
-//     updatedAt  DateTime @updatedAt
-//   }
-
 export async function addOrder({
   name,
   deliveryAddress,
@@ -128,7 +94,6 @@ export async function addOrder({
       )
       .run();
 
-    console.log(orderItems);
     const itemInserts = orderItems.map((item) =>
       db
         .prepare(
@@ -141,8 +106,8 @@ export async function addOrder({
           uuidv4(),
           orderId,
           item.shoeRackId,
-          item.shelfColor,
-          item.frameColor,
+          item.shelfColor?.name,
+          item.frameColor?.name,
           item.quantity,
           item.price,
           now,

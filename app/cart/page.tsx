@@ -6,15 +6,15 @@ import Checkout from '@/components/Checkout';
 import CartItem from '@/components/CartItem';
 import LoadingCart from '@/components/LoadingCart'
 
-
+export const runtime = 'edge';
 function Cart() {
-    const ref = useRef(null);
+    const ref = useRef<HTMLFormElement | null>(null);
 
-    const { cart, clearCart, removeFromCart, isLoadingCart } = useCustomization();
+    const { cart, isLoadingCart } = useCustomization();
     const subTotal = cart.reduce((acc, item) => acc + item.price, 0);
 
     const handleSubmit = () => {
-        ref.current.submit();
+        ref?.current?.submit();
     };
 
 
@@ -74,7 +74,7 @@ function Cart() {
                         Pay
                     </button>
 
-                
+
                 </div>
             </div>
         </div>

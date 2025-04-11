@@ -1,7 +1,6 @@
 import React from "react";
 import TestimonialCard from "./TestimonialsCard";
 import { Marquee } from "./magicui/marquee";
-import { cn } from "@/lib/utils";
 
 
 const ClientTestimonials = [

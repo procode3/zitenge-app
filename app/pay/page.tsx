@@ -8,6 +8,8 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { verifyAction } from '@/utils/actions/token.actions';
 
+export const runtime = 'edge';
+
 const PaymentPage: React.FC = () => {
     const [selectedGateway, setSelectedGateway] = useState<string | null>(null);
     const [amount, setAmount] = useState<number>(100); // Example amount
@@ -27,7 +29,6 @@ const PaymentPage: React.FC = () => {
         const decodeToken = async () => {
             try {
                 const { orderId, paymentMethod, amount } = await verifyAction(token);
-                console.log('Decoded token:', { orderId, paymentMethod, amount });
                 if (orderId && paymentMethod && amount) {
                     setData({
                         orderId,
@@ -95,19 +96,23 @@ const PaymentPage: React.FC = () => {
                             <CardTitle>Secure Payment</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <div>
+                            <div className='space-y-2'>
                                 <Label>Order ID</Label>
-                                <Input value={data.orderId} disabled />
+                                <Input value={data.orderId} readOnly />
                             </div>
-                            <div>
+                            <div className='space-y-2'>
                                 <Label>Payment Method</Label>
-                                <Input value={data?.paymentMethod.toUpperCase()} disabled />
+                                <Input value={data?.paymentMethod.toUpperCase()} readOnly />
                             </div>
-                            <div>
+                            <div className='space-y-2'>
                                 <Label>Amount</Label>
-                                <Input value={`KES ${data?.amount.toFixed(2)}`} disabled />
+                                <Input value={`KES ${data?.amount.toFixed(2)}`} readOnly />
                             </div>
-                            <Button onClick={handlePayment} className="w-full">
+                            <div className='space-y-2'>
+                                <Label>Phone Number</Label>
+                                <Input value={`0707819550`} />
+                            </div>
+                            <Button onClick={handlePayment} className="w-full" disabled={loading}>
                                 {loading ? `Processing ... ` : `Pay Now`}
                             </Button>
                         </CardContent>

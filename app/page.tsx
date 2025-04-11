@@ -2,29 +2,32 @@ import FeatureCard from "@/components/FeatureCard";
 import Testimonials from "@/components/Testimonials";
 import HeroPage from "@/components/HeroPage";
 
-const features = [
+
+export const runtime = 'edge';
+
+const features: { icon: "DraftingCompass" | "Truck" | "Award" | "ChevronsDownUp"; title: string; description: string; }[] = [
 	{
-		title: "Customizable Colors",
+		title: 'Customizable Colors',
 		description:
-			"Design your desired shoe rack from a variety of colors to match your unique style",
+			'Design your desired shoe rack from a variety of colors to match your unique style',
 		icon: `DraftingCompass`,
 	},
 	{
-		title: "Affordable Shipping",
+		title: 'Affordable Shipping',
 		description:
-			"We offer affordable country wide shipping on all orders within 1-2 weeks",
+			'We offer affordable country wide shipping on all orders within 1-2 weeks',
 		icon: `Truck`,
 	},
 	{
-		title: "Quality Craftsmanship",
+		title: 'Quality Craftsmanship',
 		description:
-			"Our shoe racks are made from the best quality materials to ensure durability",
+			'Our shoe racks are made from the best quality materials to ensure durability',
 		icon: `Award`,
 	},
 	{
-		title: "Easy Assembly",
+		title: 'Easy Assembly',
 		description:
-			"Our shoe racks are easy to set up and collapse for easy storage",
+			'Our shoe racks are easy to set up and collapse for easy storage',
 		icon: `ChevronsDownUp`,
 	},
 ];
@@ -49,7 +52,7 @@ const Home = () => {
 						<FeatureCard
 							{...feature}
 							key={feature.title}
-							className="" // Ensures that each FeatureCard takes full width in the grid
+							 // Ensures that each FeatureCard takes full width in the grid
 						/>
 					))}
 				</div>

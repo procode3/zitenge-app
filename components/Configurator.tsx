@@ -3,93 +3,11 @@ import { useState, useEffect } from 'react';
 import { MoveRight } from 'lucide-react';
 import { v4 as uuid } from 'uuid';
 
-
-import { useCustomization } from '@/contexts/Customization';
+import { Color, Rack, useCustomization, CartItem } from '@/contexts/Customization';
 import { getRacks } from '@/utils/actions/rack.actions';
 import { getColors } from '@/utils/actions/colors.action';
+import Image from 'next/image';
 
-// const shoeRacks = [
-//   {
-//     name: '12 Pair',
-//     length: 65,
-//     levels: 6,
-//     price: {
-//       rustic: 3500,
-//       painted: 4200,
-//       combined: 4000,
-//     },
-//   },
-//   {
-//     name: '18 Pair',
-//     length: 72,
-//     levels: 6,
-//     price: {
-//       rustic: 4500,
-//       painted: 5500,
-//       combined: 5000,
-//     },
-//   },
-//   {
-//     name: '24 Pair',
-//     length: 90,
-//     levels: 6,
-//     price: {
-//       rustic: 5300,
-//       painted: 6500,
-//       combined: 6000,
-//     },
-//   },
-//   {
-//     name: '30 Pair',
-//     length: 110,
-//     levels: 6,
-//     price: {
-//       rustic: 7500,
-//       painted: 8500,
-//       combined: 8000,
-//     },
-//   },
-//   {
-//     name: '40 Pair',
-//     length: 110,
-//     levels: 8,
-//     price: {
-//       rustic: 8500,
-//       painted: 10000,
-//       combined: 9000,
-//     },
-//   },
-//   {
-//     name: '50 Pair',
-//     length: 110,
-//     levels: 10,
-//     price: {
-//       rustic: 11000,
-//       painted: 13000,
-//       combined: 12000,
-//     },
-//   },
-//   {
-//     name: '60 Pair',
-//     length: 130,
-//     levels: 10,
-//     price: {
-//       rustic: 13000,
-//       painted: 15000,
-//       combined: 14000,
-//     },
-//   },
-//   {
-//     name: '70 Pair',
-//     length: 150,
-//     levels: 10,
-//     price: {
-//       rustic: 15000,
-//       painted: 17000,
-//       combined: 16000,
-//     },
-//   },
-// ];
 
 
 const Configurator = () => {
@@ -103,11 +21,10 @@ const Configurator = () => {
     addToCart,
   } = useCustomization();
 
-
-  const [price, setPrice] = useState(0);
-  const [shoeRacks, setShoeRacks] = useState([]);
-  const [colors, setColors] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [price, setPrice] = useState<number>(0);
+  const [shoeRacks, setShoeRacks] = useState<Rack[]>([]);
+  const [colors, setColors] = useState<Color[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -115,14 +32,13 @@ const Configurator = () => {
       const [racksRes, colorsRes] = await Promise.all([getRacks(), getColors()]);
 
       if (racksRes.success) {
-        console.log(racksRes.racks);
-        setShoeRacks(racksRes.racks);
+        setShoeRacks(racksRes.racks as Rack[]);
       } else {
         console.error('Failed to fetch racks:', racksRes.message);
       }
 
       if (colorsRes.success) {
-        setColors(colorsRes.colors);
+        setColors(colorsRes.colors as Color[]);
       } else {
         console.error('Failed to fetch colors:', colorsRes.message);
       }
@@ -133,13 +49,10 @@ const Configurator = () => {
     fetchData();
   }, []);
 
+  const calculateCost = (selectedRack: Rack, shelfColor: Color, frameColor: Color): number => {
+    if (!selectedRack) throw new Error('Invalid rack selected.');
 
-  const calculateCost = (selectedRack, shelfColor, frameColor) => {
-    if (!selectedRack) {
-      throw new Error('Invalid rack selected.');
-    }
-
-    let priceType;
+    let priceType: keyof typeof selectedRack.price;
 
     if (
       shelfColor?.name.toLowerCase() === 'rustic' &&
@@ -154,59 +67,60 @@ const Configurator = () => {
     } else {
       priceType = 'combined';
     }
-    return selectedRack.price[priceType] || 0;
+
+    return selectedRack.price[priceType] ?? 0;
   };
 
   const handleAddToCart = () => {
     if (!selectedRack || !shelfColor || !frameColor) {
-      alert(
-        'Please select a rack, shelf color, and frame color before adding to the cart.'
-      );
-
+      alert('Please select a rack, shelf color, and frame color before adding to the cart.');
       return;
     }
-
-    const uniqueId = uuid(); // Generate a unique UUID for each cart item
-
 
     if (!selectedRack.id) {
       alert('Invalid rack selected.');
       return;
     }
-    const cartItem = {
-      id: uniqueId, // Use the UUID as the unique ID for the cart item
+
+    const uniqueId = uuid();
+
+    const cartItem: CartItem = {
+      id: uniqueId,
       shoeRackId: selectedRack.id,
-      rack: selectedRack.name,
-      shelfColor: shelfColor.name,
-      frameColor: frameColor.name,
+      rack: selectedRack,
+      shelfColor: shelfColor,
+      frameColor: frameColor,
       quantity: 1,
       price,
+      name: selectedRack.name,
+      design: "solid",
     };
 
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const cart: CartItem[] = JSON.parse(localStorage.getItem('cart') || '[]');
     cart.push(cartItem);
     localStorage.setItem('cart', JSON.stringify(cart));
 
-    const canvas = document.querySelector('canvas');
-    const dataUrl = canvas
-      .toDataURL('image/png')
-      .replace('image/png', 'image/octet-stream');
-    let screenshots = JSON.parse(localStorage.getItem('screenshots')) || {};
-    screenshots[uniqueId] = dataUrl;
-    localStorage.setItem('screenshots', JSON.stringify(screenshots));
-    console.log(screenshots);
+    const canvas = document.querySelector('canvas') as HTMLCanvasElement | null;
+    if (canvas) {
+      const dataUrl = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
+      const screenshots: Record<string, string> = JSON.parse(localStorage.getItem('screenshots') || '{}');
+      screenshots[uniqueId] = dataUrl;
+      localStorage.setItem('screenshots', JSON.stringify(screenshots));
+    }
 
     addToCart(cartItem);
   };
 
   useEffect(() => {
-    setPrice(calculateCost(selectedRack, shelfColor, frameColor));
+    if (selectedRack && shelfColor && frameColor) {
+      setPrice(calculateCost(selectedRack, shelfColor, frameColor));
+    }
   }, [selectedRack, shelfColor, frameColor]);
 
-  const { length, levels } = selectedRack;
+  const { length = 0, levels = 0 } = selectedRack || {};
   const height = (levels - 1) * 21;
 
-  return (
+  return !loading && (
     <div className='flex flex-col text-black text-wrap h-full w-[90%] md:h-fit md:w-4/12 whitespace-nowrap  gap-3 md:gap-4  px-4 pt-4 pb-12 md:px-6 md:mx-8 bg-white border-solid md:border-[1px] rounded-2xl md:mr-8  md:overflow-hidden'>
       <div className=''>
         <h2 className='text-lg font-bold'>Handcrafted Shoe Rack</h2>
@@ -245,12 +159,12 @@ const Configurator = () => {
             {colors.map((color, index) => (
               <div
                 key={index}
-                className={`relative flex flex-col text-sm gap-1 items-center justify-center h-9 w-9 rounded-full border-slate-800 ${shelfColor?.color !== color?.color ? '' : 'border-[1px]'
+                className={`relative flex flex-col text-sm gap-1 items-center justify-center h-9 w-9 rounded-full border-slate-800 ${shelfColor?.hex !== color?.hex ? '' : 'border-[1px]'
                   } `}
               >
                 <div
                   key={index}
-                  className={` ${shelfColor?.name !== color?.name ? 'h-7 w-7' : 'h-6 w-6'
+                  className={` ${shelfColor?.hex !== color?.hex ? 'h-7 w-7' : 'h-6 w-6'
                     }  rounded-full cursor-pointer border-slate-800 border-[1px]`}
                   style={{ backgroundColor: color.hex }}
                   onClick={() => setShelfColor(color)}
@@ -270,12 +184,12 @@ const Configurator = () => {
             {colors.map((color, index) => (
               <div
                 key={index}
-                className={`relative flex flex-col text-sm gap-1 items-center justify-center h-9 w-9 rounded-full border-slate-800 ${frameColor?.color !== color?.color ? '' : 'border-[1px]'
+                className={`relative flex flex-col text-sm gap-1 items-center justify-center h-9 w-9 rounded-full border-slate-800 ${frameColor?.hex !== color?.hex ? '' : 'border-[1px]'
                   } `}
               >
                 <div
                   key={index}
-                  className={` ${frameColor?.name !== color?.name ? 'h-7 w-7' : 'h-6 w-6'
+                  className={` ${frameColor?.hex !== color?.hex ? 'h-7 w-7' : 'h-6 w-6'
                     }  rounded-full cursor-pointer border-slate-800 border-[1px]`}
                   style={{ backgroundColor: color.hex }}
                   onClick={() => setFrameColor(color)}
@@ -305,11 +219,11 @@ const Configurator = () => {
         </button>
         <div className='flex justify-evenly '>
           <div className='flex text-xs gap-2 items-center'>
-            <img src='/images/truck.svg' alt='Delivery' /> Affordable delivery
+            <Image src='/images/truck.svg' width={20} height={20} alt='Delivery' /> Affordable delivery
             cost
           </div>
           <div className='flex text-xs gap-1 items-center'>
-            <img src='/images/calendar.svg' alt='Shipping' /> Ships in 1-2 weeks
+            <Image src='/images/calendar.svg' width={20} height={20} alt='Shipping' /> Ships in 1-2 weeks
           </div>
         </div>
       </div>
@@ -318,3 +232,5 @@ const Configurator = () => {
 };
 
 export default Configurator;
+
+

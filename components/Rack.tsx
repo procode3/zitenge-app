@@ -2,27 +2,35 @@
 import React, { useRef, useEffect } from 'react';
 import * as THREE from 'three';
 import {
-  useTexture,
+  // useTexture,
   useGLTF,
   useHelper,
   AccumulativeShadows,
   RandomizedLight,
 } from '@react-three/drei';
-import { useThree } from '@react-three/fiber';
 import { Center } from '@react-three/drei';
 import { useCustomization } from '@/contexts/Customization';
 
 function Rack({ shelfCount = 9, spacing = 0.21 }) {
-  const { nodes, materials } = useGLTF('/models/mat_rack.glb');
-  const topshelfRef = useRef();
-  const frameRef = useRef();
+  const {
+    nodes,
+    // materials 
+  } = useGLTF('/models/mat_rack.glb') as unknown as {
+    nodes: {
+      topshelf: THREE.Mesh;
+      bottomshelf: THREE.Mesh;
+      frame: THREE.Mesh;
+    };
+  };;
+  const topshelfRef = useRef<THREE.InstancedMesh>(null!);
+  const frameRef = useRef<THREE.InstancedMesh>(null!);
   const temp = new THREE.Object3D();
-  const rackRef = useRef(null);
+  const rackRef = useRef<THREE.InstancedMesh>(null!);
 
   const { shelfColor, frameColor, selectedRack } = useCustomization();
-  const directionalLightRef = useRef(null);
+  const directionalLightRef = useRef<THREE.SpotLight>(null!);
 
-  useHelper(directionalLightRef, THREE.SpotLightHelper, 2, 'cyan');
+  useHelper(directionalLightRef, THREE.SpotLightHelper, 2);
 
   //   const rusticTextureProps = useTexture({
   //       map: '/textures/rustic/Wood_027_basecolor.jpg',
@@ -97,7 +105,7 @@ function Rack({ shelfCount = 9, spacing = 0.21 }) {
         {/* Instanced top shelves */}
         <instancedMesh
           ref={topshelfRef}
-          args={[nodes.topshelf.geometry, null, shelfCount]}
+          args={[nodes.topshelf.geometry, undefined, shelfCount]}
           castShadow
           scale={[selectedRack?.length / 100, 1, 1]}
         >
@@ -106,7 +114,7 @@ function Rack({ shelfCount = 9, spacing = 0.21 }) {
 
         <instancedMesh
           ref={frameRef}
-          args={[nodes.frame.geometry, null, shelfCount]}
+          args={[nodes.frame.geometry, undefined, shelfCount]}
           castShadow
           scale={[selectedRack?.length / 100, 1, 1]}
         >

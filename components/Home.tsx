@@ -1,9 +1,14 @@
-import FeatureCard from './FeatureCard';
-import Nav from './Nav';
-import NavMobile from './NavMobile';
-import Footer from './Footer';
+import Link from 'next/link';
+import FeatureCard, { IconName } from './FeatureCard';
+import Image from 'next/image';
 
-const features = [
+type FeatureCardProps = {
+  icon: IconName;
+  title: string;
+  description: string;
+};
+
+const features: FeatureCardProps[] = [
   {
     title: 'Customizable Colors',
     description:
@@ -48,19 +53,19 @@ const Home = () => {
             match your unique vibe.
           </p>
 
-          <NavLink
+          <Link
             type='button'
-            to={`/experience`}
+            href={`/experience`}
             className={`flex group text-nowrap text-center items-center bg-cyan-700 text-white px-8 w-fit  py-2 rounded hover:text-white`}
           >
             Shop Now
-          </NavLink>
+          </Link>
         </div>
         <div className='hidden md:flex content-center h-1/2 md:h-3/4 filter '>
-          <img
+          <Image
             src='/images/rack-hero.png'
             width={200}
-            className='rounded-xl'
+            height={200}
             alt='Shoe Rack'
           />
         </div>
