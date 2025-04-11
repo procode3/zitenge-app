@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation'
 
 import { Input } from '@/components/ui/input';
@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { verifyAction } from '@/utils/actions/token.actions';
 
 
-const PaymentPage: React.FC = () => {
+const PaymentPageInner: React.FC = () => {
     const [selectedGateway, setSelectedGateway] = useState<string | null>(null);
     const [amount, setAmount] = useState<number>(100); // Example amount
     const [loading, setLoading] = useState<boolean>(false);
@@ -124,4 +124,14 @@ const PaymentPage: React.FC = () => {
     );
 };
 
-export default PaymentPage;
+
+
+export default function PaymentPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <PaymentPageInner />
+        </Suspense>
+    );
+}
+
+

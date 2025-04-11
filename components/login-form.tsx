@@ -2,7 +2,6 @@
 
 import { authenticate } from "@/utils/actions"
 import { useActionState } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { ShieldBan } from 'lucide-react';
 
 import { cn } from "@/lib/utils"
@@ -22,9 +21,6 @@ export function LoginForm({
   ...props
 }: React.ComponentProps<"div">) {
 
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
-  console.log('callbackUrl', callbackUrl);
   const [errorMessage, formAction, isPending] = useActionState(
     authenticate,
     undefined,

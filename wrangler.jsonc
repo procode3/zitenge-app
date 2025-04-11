@@ -5,12 +5,29 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "zitenge-app",
-  "compatibility_date": "2025-04-09",
+  "compatibility_date": "2025-04-08",
   "compatibility_flags": ["nodejs_compat"],
   "pages_build_output_dir": ".vercel/output/static",
   "observability": {
     "enabled": true
   },
+  "assets": {
+    "directory": ".open-next/assets",
+    "not_found_handling": "single-page-application"
+  },
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      // The service should match the "name" of your worker
+      "service": "zitenge-app"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "NEXT_INC_CACHE_KV",
+      "id": "6abc00b9fe704024bdf50fd456c49943"
+    }
+  ],
 
   "d1_databases": [
     {

@@ -1,6 +1,5 @@
 import React from 'react'
 
-export const runtime = 'edge';
 
 function Settings() {
     return (

@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/sidebar"
 
 // This is sample data.
-const data = {
+export const data = {
   user: {
     name: "Erick Barasa",
     email: "eb@example.com",

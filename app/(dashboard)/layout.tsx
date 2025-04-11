@@ -12,8 +12,10 @@ import {
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { Quicksand } from "next/font/google";
-const quicksand = Quicksand({ subsets: ["latin"] });
 import "../globals.css";
+
+
+const quicksand = Quicksand({ subsets: ["latin"] });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
 
