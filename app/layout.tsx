@@ -37,7 +37,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${quicksand.className}  antialiased `}
+        className={`${quicksand.className} w-full antialiased `}
       > <CustomizationProvider>
           {!isDashboard && <Nav />}
           {!isDashboard && <NavMobile />}
