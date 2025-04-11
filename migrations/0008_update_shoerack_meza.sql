@@ -1,5 +1,4 @@
 -- CreateTable
-DROP TABLE IF EXISTS "User";
 CREATE TABLE "User" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "name" TEXT NOT NULL,
@@ -12,7 +11,6 @@ CREATE TABLE "User" (
 );
 
 -- CreateTable
-DROP TABLE IF EXISTS "Order";
 CREATE TABLE "Order" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "customerName" TEXT NOT NULL,
@@ -32,7 +30,19 @@ CREATE TABLE "Order" (
 );
 
 -- CreateTable
-DROP TABLE IF EXISTS "OrderItem";
+CREATE TABLE "ShoeRack" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "name" TEXT NOT NULL,
+    "description" TEXT,
+    "price" JSONB NOT NULL,
+    "length" INTEGER NOT NULL,
+    "levels" INTEGER NOT NULL,
+    "image" TEXT,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
+);
+
+-- CreateTable
 CREATE TABLE "OrderItem" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "orderId" TEXT NOT NULL,
@@ -48,20 +58,6 @@ CREATE TABLE "OrderItem" (
 );
 
 -- CreateTable
-DROP TABLE IF EXISTS "ShoeRack";
-CREATE TABLE "ShoeRack" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "name" TEXT NOT NULL,
-    "description" TEXT,
-    "price" REAL NOT NULL,
-    "size" JSONB NOT NULL,
-    "image" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
-);
-
--- CreateTable
-DROP TABLE IF EXISTS "Payment";
 CREATE TABLE "Payment" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "orderId" TEXT NOT NULL,
@@ -74,6 +70,18 @@ CREATE TABLE "Payment" (
     CONSTRAINT "Payment_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "Order" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
+-- CreateTable
+CREATE TABLE "Color" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "name" TEXT NOT NULL,
+    "hex" TEXT NOT NULL
+);
+
 -- CreateIndex
-DROP INDEX IF EXISTS "User_email_key";
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ShoeRack_name_key" ON "ShoeRack"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Color_hex_key" ON "Color"("hex");

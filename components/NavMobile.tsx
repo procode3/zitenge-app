@@ -37,7 +37,7 @@ const NavMobile = () => {
   useClickAway(ref, () => setOpen(false));
 
   return (
-    <div ref={ref} className='relative md:hidden z-10'>
+    <div ref={ref} className='relative md:hidden z-20'>
       <div className='flex text-black justify-between w-screen px-4  bg-white fixed top-0 z-11 items-center'>
         <h2 className='text-2xl'>zitenge</h2>
         <div className='flex w-fit items-center  gap-2'>
