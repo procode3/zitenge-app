@@ -3,7 +3,7 @@ import React from 'react'
 
 function Settings() {
     return (
-        <div>All orders page</div>
+        <div>All settings page</div>
     )
 }
 

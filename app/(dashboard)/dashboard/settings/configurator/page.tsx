@@ -31,8 +31,6 @@ const rackSchema = z.object({
 });
 
 
-
-
 export default function ConfiguratorSettings() {
     const [shoeRacks, setShoeRacks] = useState<Rack[]>([]);
     const [editingRack, setEditingRack] = useState<Rack & { index: number } | null>(null);
@@ -62,11 +60,11 @@ export default function ConfiguratorSettings() {
             combined: number;
         };
     }) {
-        const { success, results } = await addRack(values)
+        const res = await addRack(values)
 
-        if (success && results) {
+        if (res?.success && res?.results) {
             setOpen(false);
-            addShoeRack(results as Rack);
+            setShoeRacks([...shoeRacks, res?.results]);
         } else {
             alert("Adding rack failed, an error occured")
         }
@@ -81,11 +79,7 @@ export default function ConfiguratorSettings() {
         setEditingRack(null);
     }
 
-    function addShoeRack(addedRack: Rack) {
 
-        setShoeRacks([...shoeRacks, addedRack]);
-
-    }
 
 
     useEffect(() => {
@@ -100,7 +94,7 @@ export default function ConfiguratorSettings() {
                     setColors(colorsRes?.colors as Color[]);
                 }
                 if (racksRes?.success) {
-                    console.log(racksRes?.racks);
+
                     setShoeRacks(racksRes?.racks as Rack[]);
                 }
             } catch (error) {
@@ -146,7 +140,8 @@ export default function ConfiguratorSettings() {
     return (
         <>
             <div className="p-6 overflow-auto">
-                <h2 className="text-lg font-bold mb-4">Shoe Rack Management</h2>
+                <h2 className="text-lg font-semibold">Shoe Rack Management</h2>
+                <p className='text-sm  text-gray-500'>Manage shoeracks and colors that appear on the configurator page.</p>
                 <div className="mb-4 flex justify-end">
                     <Dialog open={open} onOpenChange={setOpen}>
 

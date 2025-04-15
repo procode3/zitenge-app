@@ -2,24 +2,22 @@
 
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { revalidatePath } from 'next/cache';
-import { v4 as uuidv4 } from 'uuid';
+import { drizzle } from 'drizzle-orm/d1';
+import { eq } from 'drizzle-orm';
+import { shoeRacks } from '@/db/schema';
 
 export async function getRacks() {
   try {
     const context = await getCloudflareContext();
-    const db = context.env.DB as D1Database;
+    const db = drizzle(context.env.DB as D1Database);
 
     if (!db) {
       throw new Error('Database not found in context');
     }
 
-    const shoeRacksRaw = await db.prepare('SELECT * FROM shoerack').all();
-    const shoeRacks =
-      shoeRacksRaw.results?.map((rack) => ({
-        ...rack,
-        price: JSON.parse(rack?.price as string),
-      })) ?? [];
-    return { success: true, racks: shoeRacks || [] };
+    const rawshoeRacks = await db.select().from(shoeRacks).all();
+
+    return { success: true, racks: rawshoeRacks || [] };
   } catch (error) {
     console.error('Failed to fetch colors:', error);
     return { success: false, message: 'Failed to fetch colors' };
@@ -43,31 +41,24 @@ export async function addRack({
 }) {
   try {
     const context = await getCloudflareContext();
-    const db = context.env.DB as D1Database;
+    const db = drizzle(context.env.DB as D1Database);
 
     if (!db) {
       throw new Error('Database not found in context');
     }
 
-    const now = new Date().toISOString();
-
-    const id = uuidv4();
-    const inserteRackRaw = await db
-      .prepare(
-        'INSERT INTO shoerack (id, name, length, levels, price, createdAt, updatedAt ) VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING *'
-      )
-      .bind(id, name, length, levels, JSON.stringify(price), now, now)
-      .run();
-
-    const inserteRack = {
-      ...inserteRackRaw.results[0],
-      price: JSON.parse(inserteRackRaw?.results[0]?.price as string),
+    const newRack: typeof shoeRacks.$inferInsert = {
+      name,
+      length,
+      levels,
+      price,
     };
-
+    const inserteRack = await db.insert(shoeRacks).values(newRack).returning();
     revalidatePath('/experience');
+
     return {
       success: true,
-      results: inserteRack || {},
+      results: inserteRack[0] || {},
       message: 'Rack added successfully',
     };
   } catch (error) {
@@ -79,11 +70,11 @@ export async function addRack({
 export async function deleteRack(id: string) {
   try {
     const context = await getCloudflareContext();
-    const db = context.env.DB as D1Database;
+    const db = drizzle(context.env.DB as D1Database);
 
     if (!db) throw new Error('Database not found in context');
 
-    await db.prepare('DELETE FROM shoerack WHERE id = ?').bind(id).run();
+    await db.delete(shoeRacks).where(eq(shoeRacks.id, id));
 
     revalidatePath('/experience');
 

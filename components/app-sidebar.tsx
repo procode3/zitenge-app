@@ -77,7 +77,7 @@ export const data = {
       icon: Settings2,
       items: [
         { title: "General", url: "#" },
-        { title: "Team", url: "#" },
+        { title: "Team", url: "/dashboard/settings/team" },
         { title: "Billing", url: "#" },
         { title: "Configurator", url: "/dashboard/settings/configurator" },
         { title: "Integrations", url: "#" },

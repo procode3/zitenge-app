@@ -36,9 +36,9 @@ const Experience = () => {
                     <Environment preset='city' />
                 </Canvas>
             </div>
-            <Suspense fallback={<p>Loading Configurator...</p>}>
-                <Configurator />
-            </Suspense>
+
+            <Configurator />
+
         </div>
     );
 };

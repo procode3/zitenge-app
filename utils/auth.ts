@@ -2,6 +2,9 @@ import NextAuth, { CredentialsSignin, NextAuthResult } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { comparePassword } from '@/utils/password';
+import { drizzle } from 'drizzle-orm/d1';
+import { eq } from 'drizzle-orm';
+import { users } from '@/db/schema';
 
 const authResult = async (): Promise<NextAuthResult> => {
   return NextAuth({
@@ -18,36 +21,31 @@ const authResult = async (): Promise<NextAuthResult> => {
               password: string;
             };
             const context = await getCloudflareContext();
-            const db = context.env.DB as D1Database;
+            const db = drizzle(context.env.DB as D1Database);
 
             if (!context.env.DB) {
               throw new Error('Database not found in context');
             }
 
             const user = await db
-              .prepare(
-                'SELECT id, email, name, password FROM user WHERE email = ?'
-              )
-              .bind(username)
-              .first();
+              .select()
+              .from(users)
+              .where(eq(users.email, username));
 
             const isPasswordValid = await comparePassword(
               credentials?.password as string,
-              user?.password as string
+              user[0]?.password as string
             );
 
             if (!isPasswordValid) {
-              console.log('invalid password'); // Debug
+              console.error('invalid password'); // Debug
               throw new CredentialsSignin('Invalid credentials');
             }
 
-            console.log('Query results:', user); // Debug
-
-            // const isValidPassword = await compare(password, user.password);
             return {
-              id: user?.id as string,
-              email: user?.email as string,
-              name: user?.name as string,
+              id: user[0]?.id as string,
+              email: user[0]?.email as string,
+              name: user[0]?.name as string,
             };
           } catch (error) {
             console.error('Authentication error:', error);
