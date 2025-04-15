@@ -4,21 +4,33 @@ import {
     SearchIcon,
 } from "lucide-react"
 
-// import {
-//     Command,
-//     CommandEmpty,
-//     CommandGroup,
-//     CommandInput,
-//     CommandItem,
-//     CommandList,
-//     CommandSeparator,
-//     CommandShortcut,
-// } from "@/components/ui/command"
+import { Payment, columns } from "./columns"
+import { DataTable } from "./data-table"
+
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
-function Orders() {
+async function getData(): Promise<Payment[]> {
+    // Fetch data from your API here.
+    return [
+        {
+            id: "728ed52f",
+            amount: 14400,
+            status: "pending",
+            email: "am@example.com",
+        },
+        {
+            id: "728ed52f",
+            amount: 12200,
+            status: "pending",
+            email: "bm@example.com",
+        },
+    ]
+}
+
+async function Orders() {
+    const data = await getData()
     return (
         <>
             <div>
@@ -41,6 +53,9 @@ function Orders() {
                         <Plus /> Add Order
                     </Button>
                 </div>
+            </div>
+            <div className="container mx-auto">
+                <DataTable columns={columns} data={data} />
             </div>
         </>
 

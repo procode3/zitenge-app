@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { drizzle } from 'drizzle-orm/d1';
 import { eq } from 'drizzle-orm';
 import { shoeRacks } from '@/db/schema';
+import { Rack } from '@/contexts/Customization';
 
 export async function getRacks() {
   try {
@@ -58,7 +59,7 @@ export async function addRack({
 
     return {
       success: true,
-      results: inserteRack[0] || {},
+      results: inserteRack[0] as Rack,
       message: 'Rack added successfully',
     };
   } catch (error) {
