@@ -7,6 +7,7 @@ import { Color, Rack, useCustomization, CartItem } from '@/contexts/Customizatio
 import { getRacks } from '@/utils/actions/rack.actions';
 import { getColors } from '@/utils/actions/colors.action';
 import Image from 'next/image';
+import { Button } from './ui/button';
 
 
 
@@ -121,10 +122,10 @@ const Configurator = () => {
   const height = (levels - 1) * 21;
 
   return !loading && (
-    <div className='flex flex-col text-black text-wrap h-full w-[90%] md:h-fit md:w-4/12 whitespace-nowrap  gap-3 md:gap-4  px-4 pt-4 pb-12 md:px-6 md:mx-8 bg-white border-solid md:border-[1px] rounded-2xl md:mr-8  md:overflow-hidden'>
+    <div className='flex flex-col text-black text-wrap h-full w-full md:h-fit whitespace-nowrap  gap-3 md:gap-4  px-4 pt-4 pb-12 md:px-6 bg-white border-solid md:border-[1px] rounded-2xl  md:overflow-hidden'>
       <div className=''>
         <h2 className='text-lg font-bold'>Handcrafted Shoe Rack</h2>
-        <p className='text-xs md:text-sm my-1 text-black/80'>
+        <p className='text-xs md:text-sm my-1 text-black/80 text-wrap'>
           Configure your shoe rack to fit your needs. The shoe rack comes with a
           solid wood with a collapsible frame. <br /> Dimensions:{' '}
           <span className='text-xs font-semibold mt-1'>
@@ -210,13 +211,13 @@ const Configurator = () => {
             <span className='text-normal font-bold '>Ksh. {price}</span>
           </h2>
         </div>
-        <button
+        <Button
           onClick={handleAddToCart}
-          className='flex justify-evenly items-center select-none w-full md:w-[70%] mx-auto h-10 bg-cyan-700 text-sm text-white text-center rounded cursor-pointer content-center'
+          
         >
           Add to cart
           <MoveRight size={32} strokeWidth={1.2} />
-        </button>
+        </Button>
         <div className='flex justify-evenly '>
           <div className='flex text-xs gap-2 items-center'>
             <Image src='/images/truck.svg' width={20} height={20} alt='Delivery' /> Affordable delivery
