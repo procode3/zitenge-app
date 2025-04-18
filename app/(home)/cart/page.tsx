@@ -25,7 +25,7 @@ function Cart() {
 
 
     return cart?.length > 0 ? (
-        <div className='mt-16 md:mt-0 font-quicksand flex flex-col gap-4 text-black items-center justify-center w-screen h-full p-4 md:p-6 '>
+        <div className='mt-16 md:mt-[10vh] font-quicksand flex flex-col gap-4 text-black items-center justify-center w-screen h-full p-4 md:p-6 '>
             <h2 className='text-xl text-center '>Cart ({cart?.length} Items)</h2>
             <div className='flex flex-col lg:flex-row  gap-8 lg:gap-12 w-full lg:w-[90%] h-fit justify-center  '>
                 <Checkout ref={ref} />

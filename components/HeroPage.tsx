@@ -1,24 +1,107 @@
-import React from "react";
+"use client";
+
+import { useState, useEffect, Suspense } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import dynamic from "next/dynamic";
 import HeroModel from "./HeroModel";
+import { Button } from "./ui/button";
+import { Skeleton } from "./ui/skeleton";
+import { Anton } from "next/font/google";
+
+// Dynamically import Configurator with no built-in loading fallback
+const LazyConfigurator = dynamic(() => import("./Configurator"), {
+  loading: () => null,
+  ssr: false,
+});
+
+const anton = Anton({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-anton",
+});
 
 export default function HeroPage() {
-	return (
-		<div className="relative w-full h-screen overflow-hidden bg-white">
-			{/* Text: Zitenge (Behind) */}
+  const [customizing, setCustomizing] = useState(false);
+  const [configLoaded, setConfigLoaded] = useState(false);
+  const transition = { type: "spring", duration: 0.8 };
 
-			{/* 3D Model */}
-			<div className="absolute z-10 inset-0">
-				<HeroModel />
-			</div>
+  useEffect(() => {
+    if (customizing) {
+      const timer = setTimeout(() => setConfigLoaded(true), 600); // optional extra buffer
+      return () => clearTimeout(timer);
+    } else {
+      setConfigLoaded(false);
+    }
+  }, [customizing]);
 
-			{/* Text: Handicrafts (Front) */}
-			<h1 className="absolute z-20 flex gap-5 text-4xl md:text-6xl font-semibold text-black top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
-				<span className="">Zitenge</span>
-				<span className="">Handicrafts</span>
-			</h1>
-		</div>
-	);
+  return (
+    <div className="relative w-full h-screen overflow-hidden flex">
+      {/* HeroModel in background */}
+      <div className="absolute inset-0 -z-10">
+        <HeroModel offset={0} customizing={customizing} />
+      </div>
+
+      {/* Left Zitenge Text Block */}
+      <div className="w-full md:w-1/2 h-full flex items-center px-6 md:px-20 lg:px-40">
+        <AnimatePresence>
+          {!customizing && (
+            <motion.div
+              initial={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -50 }}
+              transition={transition}
+              className="z-30 max-w-xl flex flex-col gap-5"
+            >
+              <h1
+                className={`${anton.className} uppercase text-[3.5rem] sm:text-[6rem] md:text-[10rem] lg:text-[14rem] font-bold tracking-tight`}
+              >
+                Zitenge
+              </h1>
+              <span className="text-cyan-700 text-sm font-semibold">
+                Trusted by over 2000+ customers
+              </span>
+              <h2 className="mt-2 text-[1.2rem] md:text-[2rem] font-semibold md:leading-[2.4rem] tracking-tight">
+                Improve the way you organize your shoes with our Handcrafted Shoe Racks
+              </h2>
+              <Button onClick={() => setCustomizing(true)} className="max-w-[10rem]">Customize</Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Configurator Panel */}
+      <AnimatePresence>
+        {customizing && (
+          <motion.div
+            initial={{ x: "100%", opacity: 0 }}
+            animate={{ x: "0%", opacity: 1 }}
+            exit={{ x: "100%", opacity: 0 }}
+            transition={transition}
+            className="md:absolute md:right-0 top-0 h-full  w-full md:w-1/2 z-30 flex items-center justify-center"
+          >
+            <div className="w-full md:w-1/2 min-h-[60vh]  flex flex-col gap-5">
+              <Button onClick={() => setCustomizing(false)} className="max-w-[10rem]">Back</Button>
+              {configLoaded ? (
+                <Suspense fallback={null}>
+                  <LazyConfigurator />
+                </Suspense>
+              ) : (
+                <div className="space-y-4 h-80">
+                  <Skeleton className="h-[60vh] w-full" />                  
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
 }
+
+
+
+
+
+
 
 {
 	/* <div className="container flex flex-col">
