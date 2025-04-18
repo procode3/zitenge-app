@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Quicksand } from "next/font/google";
 import "../globals.css";
-import { headers } from "next/headers";
+
 
 import Nav from "@/components/Nav";
 import NavMobile from "@/components/NavMobile";
@@ -30,19 +30,16 @@ export default async function RootLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-	const headerList = await headers();
-	const pathname = headerList.get("referer");
-	const isDashboard =
-		pathname?.includes("/dashboard") || pathname?.startsWith("/login");
+
 	return (
 		<html lang="en">
 			<body className={`${quicksand.className} w-full antialiased `}>
 				{" "}
 				<CustomizationProvider>
-					{!isDashboard && <Nav />}
-					{!isDashboard && <NavMobile />}
+					<Nav />
+					<NavMobile />
 					{children}
-					{!isDashboard && <Footer />}
+					<Footer />
 				</CustomizationProvider>
 			</body>
 		</html>

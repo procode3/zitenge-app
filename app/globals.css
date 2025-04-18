@@ -148,3 +148,7 @@
   animation: marquee-vertical linear infinite;
   animation-duration: var(--duration, 40s);
 }
+
+html {
+  scroll-behavior: smooth;
+}

@@ -2,7 +2,9 @@
 
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { revalidatePath } from 'next/cache';
-import { v4 as uuidv4 } from 'uuid';
+import { drizzle } from 'drizzle-orm/d1';
+// import { eq } from 'drizzle-orm';
+import { orderItems, orders } from '@/db/schema';
 
 export type Color = {
   id: string;
@@ -33,19 +35,15 @@ interface Order {
 export async function getOrders() {
   try {
     const context = await getCloudflareContext();
-    const db = context.env.DB as D1Database;
+    const db = drizzle(context.env.DB as D1Database);
 
     if (!db) {
       throw new Error('Database not found in context');
     }
 
-    const ordersRaw = await db.prepare('SELECT * FROM orders').all();
-    const orders =
-      ordersRaw.results?.map((rack) => ({
-        ...rack,
-        price: JSON.parse(rack?.price as string),
-      })) ?? [];
-    return { success: true, racks: orders || [] };
+    const ordersRaw = await db.select().from(orders).all();
+
+    return { success: true, racks: ordersRaw || [] };
   } catch (error) {
     console.error('Failed to fetch colors:', error);
     return { success: false, message: 'Failed to fetch colors' };
@@ -61,60 +59,40 @@ export async function addOrder({
   email,
   deposit,
   userId,
-  orderItems,
+  orderItems: cartItems,
   paymentMethod,
 }: Order) {
   try {
     const context = await getCloudflareContext();
-    const db = context.env.DB as D1Database;
+    const db = drizzle(context.env.DB as D1Database);
     if (!db) throw new Error('Database not found in context');
+    const newOrder: typeof orders.$inferInsert = {
+      guestName: name,
+      deliveryDate: new Date(deliveryDate),
+      deliveryAddress,
+      notes,
+      phoneNumber,
+      guestEmail: email,
+      deposit,
+      userId,
+    };
 
-    const now = new Date().toISOString();
-    const orderId = uuidv4();
+    const { orderId } = (
+      await db.insert(orders).values(newOrder).returning({ orderId: orders.id })
+    )[0];
 
-    await db
-      .prepare(
-        `INSERT INTO "Order" (
-      id, customerName, deliveryDate, deliveryAddress, notes, phoneNumber,
-      guestEmail, deposit, userId, createdAt, updatedAt
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-      )
-      .bind(
+    const itemInserts = cartItems.map((item) => {
+      const { shoeRackId, shelfColor, frameColor, quantity, price } = item;
+      const newItem: typeof orderItems.$inferInsert = {
         orderId,
-        name,
-        deliveryDate,
-        deliveryAddress,
-        notes || null,
-        phoneNumber || null,
-        email || null,
-        deposit ?? null,
-        userId || null,
-        now,
-        now
-      )
-      .run();
-
-    const itemInserts = orderItems.map((item) =>
-      db
-        .prepare(
-          `INSERT INTO "orderitem" (
-              id, orderId, shoeRackId, shelfColor, frameColor,
-              quantity, price, createdAt, updatedAt
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
-        )
-        .bind(
-          uuidv4(),
-          orderId,
-          item.shoeRackId,
-          item.shelfColor?.name,
-          item.frameColor?.name,
-          item.quantity,
-          item.price,
-          now,
-          now
-        )
-        .run()
-    );
+        shoeRackId,
+        shelfColor: shelfColor?.name as string,
+        frameColor: frameColor?.name as string,
+        quantity,
+        price,
+      };
+      db.insert(orderItems).values(newItem);
+    });
 
     await Promise.all(itemInserts);
 

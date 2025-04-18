@@ -2,6 +2,7 @@
 import React, { useState, forwardRef, useImperativeHandle, useCallback, useEffect, useRef } from 'react';
 import { useForm } from "react-hook-form"
 import { useRouter } from 'next/navigation'; // For extracting URL params
+import type { Route } from 'next';
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -20,31 +21,34 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+
+import { Input } from "@/components/ui/input"
 import {
   Select, SelectTrigger, SelectValue, SelectItem, SelectContent
 } from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
+
 import { orderSchema } from '@/schemas/order.schema';
 
 
-const paymentMethods = [
-  {
-    name: 'mpesa',
-    label: "M-Pesa",
-    enabled: true,
-  },
-  {
-    name: "card",
-    label: 'Credit Card',
-    enabled: false,
-  },
-  {
-    name: "cash",
-    label: 'Cash',
-    enabled: false,
-  },
 
-];
+// const paymentMethods = [
+//   {
+//     name: 'mpesa',
+//     label: "M-Pesa",
+//     enabled: true,
+//   },
+//   {
+//     name: "card",
+//     label: 'Credit Card',
+//     enabled: false,
+//   },
+//   {
+//     name: "cash",
+//     label: 'Cash',
+//     enabled: false,
+//   },
+
+// ];
 
 interface Feature {
   properties: {
@@ -64,7 +68,7 @@ const Checkout = forwardRef((props, ref) => {
   const [paymentType, setPaymentType] = useState("deposit");
   const [fullAmount, setFullAmount] = useState(0);
   const { cart } = useCustomization();
-  const router = useRouter();
+
 
 
   const form = useForm<z.infer<typeof orderSchema>>({
@@ -176,7 +180,7 @@ const Checkout = forwardRef((props, ref) => {
       const paymentUrl = `/pay?token=${token}`;
 
       alert(`Order created successfully proceed to pay with ${paymentUrl}`);
-      router.push(paymentUrl);
+      // router.push(paymentUrl as unknown as Route);
 
     }
     else {
@@ -191,10 +195,14 @@ const Checkout = forwardRef((props, ref) => {
   }));
 
   return (
-    <div className='font-quicksand mt-12 md:mt-0 bg-white p-4 md:px-8 text-black w-full lg:w-[60%] h-full '>
-      <h2 className='text-lg my-2 text-center font-semibold'>Delivery Information</h2>
+    <div className='font-quicksand mt-8 md:mt-0 bg-white  text-black w-full  h-full '>
+      <div className='flex flex-col my-4'>
+        <h2 className='text-lg font-semibold'>Delivery Information</h2>
+        <p className='text-sm  text-gray-500'>Provide contact details and shipping address.</p>
+      </div>
+
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4  grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="fullName"
@@ -364,7 +372,7 @@ const Checkout = forwardRef((props, ref) => {
             </div>
           </div>
 
-          <FormField
+          {/* <FormField
             control={form.control}
             name="paymentMethod"
             render={({ field }) => (
@@ -387,7 +395,7 @@ const Checkout = forwardRef((props, ref) => {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
 
 
         </form>
