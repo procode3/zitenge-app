@@ -4,9 +4,10 @@ import React, { useState, useEffect, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Environment, Backdrop } from "@react-three/drei";
 import Rack from "./Rack";
+import * as THREE from "three";
 
 function CameraRig({ customizing }: { customizing: boolean }) {
-	const group = useRef<any>();
+	const group = useRef<THREE.Group>(null);
 	const isDragging = useRef(false);
 	const previousX = useRef(0);
 	const mouseX = useRef(0);
@@ -86,17 +87,17 @@ export default function HeroModel({
 
 	return (
 		<div className="absolute inset-0 pointer-events-none w-full -z-10">
-	<Canvas
-		className="pointer-events-auto"
-		shadows
-		dpr={1.5}
-		gl={{ preserveDrawingBuffer: true }}
-		camera={{ position: [0, 1.5, 6], fov }}
-	>
+			<Canvas
+				className="pointer-events-auto"
+				shadows
+				dpr={1.5}
+				gl={{ preserveDrawingBuffer: true }}
+				camera={{ position: [0, 1.5, 6], fov }}
+			>
 
 				<color attach="background" args={["#ffffff"]} />
-				<ambientLight intensity={0.2} color={'cyan'}/>
-				<directionalLight position={[5, 10, 5]} intensity={0.8} castShadow  />
+				<ambientLight intensity={0.2} color={'cyan'} />
+				<directionalLight position={[5, 10, 5]} intensity={0.8} castShadow />
 				<Environment preset="city" />
 				<Backdrop
 					floor={2}
@@ -110,7 +111,7 @@ export default function HeroModel({
 
 				<CameraRig customizing={customizing} />
 
-				
+
 			</Canvas>
 		</div>
 	);

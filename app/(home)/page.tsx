@@ -39,7 +39,7 @@ const Home = () => {
 		<div className="relative font-quicksand flex flex-col items-center content-center  h-full overflow-hidden">
 			<HeroPage />
 			<section className="container flex justify-between flex-wrap py-16 gap-8 text-black px-4 md:px-0  h-full">
-				<div className="flex flex-col gap-4 w-full text-center md:w-[70%]">
+				<div className="flex flex-col gap-4 w-full text-center md:w-[70%] mx-auto">
 					<h2 className="text-[2rem] font-semibold leading-[2.4rem] sm:leading-[42px] tracking-tight">
 						Why choose Zitenge Shoe Racks?
 					</h2>
@@ -49,7 +49,7 @@ const Home = () => {
 					</p>
 				</div>
 
-				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 sm:gap-8 justify-evenly w-full ">
+				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 sm:gap-8 justify-evenly mx-auto w-4/5 ">
 					{features.map((feature) => (
 						<FeatureCard
 							{...feature}

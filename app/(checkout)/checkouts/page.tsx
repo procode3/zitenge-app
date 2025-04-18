@@ -11,7 +11,6 @@ import { Input } from '@/components/ui/input';
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -47,7 +46,7 @@ function Payment() {
         },
     })
 
-    function onSubmit(values) {
+    function onSubmit(values: z.infer<typeof creditCardSchema>) {
         alert(values)
     }
 
