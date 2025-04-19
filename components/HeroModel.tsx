@@ -4,10 +4,10 @@ import React, { useState, useEffect, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Environment, Backdrop } from "@react-three/drei";
 import Rack from "./Rack";
-import * as THREE from "three";
+import { Group } from "three";
 
 function CameraRig({ customizing }: { customizing: boolean }) {
-	const group = useRef<THREE.Group>(null);
+	const group = useRef<Group>(null);
 	const isDragging = useRef(false);
 	const previousX = useRef(0);
 	const mouseX = useRef(0);

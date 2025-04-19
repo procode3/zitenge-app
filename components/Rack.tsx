@@ -1,6 +1,6 @@
 'use client'
 import React, { useRef, useEffect } from 'react';
-import * as THREE from 'three';
+import { Mesh, InstancedMesh, Object3D, SpotLight, SpotLightHelper } from 'three';
 import {
   // useTexture,
   useGLTF,
@@ -17,20 +17,20 @@ function Rack({ shelfCount = 9, spacing = 0.21 }) {
     // materials 
   } = useGLTF('/models/mat_rack.glb') as unknown as {
     nodes: {
-      topshelf: THREE.Mesh;
-      bottomshelf: THREE.Mesh;
-      frame: THREE.Mesh;
+      topshelf: Mesh;
+      bottomshelf: Mesh;
+      frame: Mesh;
     };
   };
-  const topshelfRef = useRef<THREE.InstancedMesh>(null!);
-  const frameRef = useRef<THREE.InstancedMesh>(null!);
-  const temp = new THREE.Object3D();
-  const rackRef = useRef<THREE.InstancedMesh>(null!);
+  const topshelfRef = useRef<InstancedMesh>(null!);
+  const frameRef = useRef<InstancedMesh>(null!);
+  const temp = new Object3D();
+  const rackRef = useRef<InstancedMesh>(null!);
 
   const { shelfColor, frameColor, selectedRack } = useCustomization();
-  const directionalLightRef = useRef<THREE.SpotLight>(null!);
+  const directionalLightRef = useRef<SpotLight>(null!);
 
-  useHelper(directionalLightRef, THREE.SpotLightHelper, 2);
+  useHelper(directionalLightRef, SpotLightHelper, 2);
 
   //   const rusticTextureProps = useTexture({
   //       map: '/textures/rustic/Wood_027_basecolor.jpg',

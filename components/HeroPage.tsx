@@ -52,7 +52,7 @@ export default function HeroPage() {
               className="z-30 max-w-xl flex flex-col gap-5"
             >
               <h1
-                className={`${anton.className} uppercase text-[3.5rem] sm:text-[6rem] md:text-[10rem] lg:text-[14rem] font-bold tracking-tight`}
+                className={`${anton.className} uppercase text-[3.5rem] sm:text-[6rem] md:text-[10rem] lg:text-[14rem] font-bold tracking-tight text-italic`}
               >
                 Zitenge
               </h1>
@@ -86,7 +86,7 @@ export default function HeroPage() {
                 </Suspense>
               ) : (
                 <div className="space-y-4 h-80">
-                  <Skeleton className="h-[60vh] w-full" />                  
+                  <Skeleton className="h-[60vh] w-full" />
                 </div>
               )}
             </div>
@@ -104,38 +104,38 @@ export default function HeroPage() {
 
 
 {
-	/* <div className="container flex flex-col">
-					<h1 className=" z-50 items-end uppercase text-[4rem] font-semibold">
-						Zitenge
-					</h1>
-					<span className="text-cyan-700 mt-20 md:mt-0 text-sm font-semibold ">
-						Trusted by over 2000+ customers
-					</span>
-					<h1 className="text-[2.5rem] font-semibold leading-[2.4rem] sm:leading-[3rem] tracking-tight">
-						Improve the way you organize your shoes with our Handcrafted Shoe
-						Racks
-					</h1>
-				</div> */
+  /* <div className="container flex flex-col">
+          <h1 className=" z-50 items-end uppercase text-[4rem] font-semibold">
+            Zitenge
+          </h1>
+          <span className="text-cyan-700 mt-20 md:mt-0 text-sm font-semibold ">
+            Trusted by over 2000+ customers
+          </span>
+          <h1 className="text-[2.5rem] font-semibold leading-[2.4rem] sm:leading-[3rem] tracking-tight">
+            Improve the way you organize your shoes with our Handcrafted Shoe
+            Racks
+          </h1>
+        </div> */
 }
 
 {
-	/* <div className="hidden md:flex content-center h-1/2 md:h-3/4 filter relative">
-	<Image
-		src="/images/rack-hero.png"
-		height={200}
-		width={200}
-		className="rounded-xl"
-		alt="Shoe Rack"
-	/>
+  /* <div className="hidden md:flex content-center h-1/2 md:h-3/4 filter relative">
+  <Image
+    src="/images/rack-hero.png"
+    height={200}
+    width={200}
+    className="rounded-xl"
+    alt="Shoe Rack"
+  />
 </div>; */
 }
 
 {
-	/* <HeroModel/> */
+  /* <HeroModel/> */
 }
 
 {
-	/* <div className="flex flex-col justify-evenly  gap-8 h-full items-center md:items-baseline w-full md:w-1/2 ">
+  /* <div className="flex flex-col justify-evenly  gap-8 h-full items-center md:items-baseline w-full md:w-1/2 ">
                             <span className="text-cyan-700 mt-20 md:mt-0 text-sm font-semibold ">
                                 Trusted by over 2000+ customers
                             </span>
